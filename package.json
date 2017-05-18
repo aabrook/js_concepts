@@ -2,5 +2,11 @@
   "name": "js_concepts",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "test": "RELEASE_ENVIRONMENT=test NODE_ENV=test mocha './{,(!node_modules)}/**/__tests__/*-test.js'"
+  },
+  "dependencies": {
+    "mocha": "^3.4.1"
+  }
 }
