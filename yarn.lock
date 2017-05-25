@@ -182,6 +182,10 @@ supports-color@3.1.2:
   dependencies:
     has-flag "^1.0.0"
 
+uuid-lib@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/uuid-lib/-/uuid-lib@0.0.6.tgz#1e2031a6da7ab69474b8270368f0ecb8c69aac1d"
+
 wrappy@1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/wrappy/-/wrappy-1.0.2.tgz#b5243d8f3ec1aa35f1364605bc0d1036e30ab69f"

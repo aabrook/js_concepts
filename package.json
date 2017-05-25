@@ -7,6 +7,7 @@
     "test": "RELEASE_ENVIRONMENT=test NODE_ENV=test mocha './{,(!node_modules)}/**/__tests__/*-test.js'"
   },
   "dependencies": {
-    "mocha": "^3.4.1"
+    "mocha": "^3.4.1",
+    "uuid-lib": "^0.0.6"
   }
 }
