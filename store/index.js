@@ -1,12 +1,12 @@
 const { assign } = Object
 
-function Store(state, reducers, observers) {
+function Store (state, reducers, observers) {
   this.observers = observers
   this.reducers = reducers
   this.state = state
 }
 
-Store.prototype.store = function() {
+Store.prototype.store = function () {
   return {
     observers: this.observers,
     reducers: this.reducers,
@@ -14,7 +14,7 @@ Store.prototype.store = function() {
   }
 }
 
-Store.prototype.dispatch = function(action) {
+Store.prototype.dispatch = function (action) {
   const {observers, reducers, state} = update(this.store())(action)
   this.observers = observers
   this.reducers = reducers
@@ -23,7 +23,6 @@ Store.prototype.dispatch = function(action) {
   return this
 }
 
-const Observer = (fn) => (state, newState) => fn(state, newState)
 const createStore = (state = {}, reducers = [], observers = []) => {
   return new Store(state, reducers, observers)
 }
