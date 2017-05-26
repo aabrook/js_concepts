@@ -1,0 +1,12 @@
+{
+  "development": {
+    "database": "events",
+    "storage": "db/store/development/events.db",
+    "dialect": "sqlite"
+  },
+  "test": {
+    "database": "events",
+    "storage": "db/store/test/events.db",
+    "dialect": "sqlite"
+  }
+}
