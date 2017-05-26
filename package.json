@@ -8,7 +8,10 @@
   },
   "dependencies": {
     "mocha": "^3.4.1",
+    "sequelize": "^3.30.4",
+    "sequelize-cli": "^2.7.0",
     "sinon": "^2.3.1",
+    "sqlite3": "^3.1.8",
     "uuid-lib": "^0.0.6"
   }
 }
