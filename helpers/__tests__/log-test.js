@@ -7,7 +7,7 @@ describe('log', () => {
   const sum = (...args) => args.reduce((acc, n) => acc + n, 0)
   it('should log all arguments', () => {
     const logger = sinon.spy()
-    const result = log(logger)(sum)(1, 2, 3, 4)
+    log(logger)(sum)(1, 2, 3, 4)
 
     assert.deepEqual(logger.getCall(0).args, ['args', 1, 2, 3, 4])
     assert.deepEqual(logger.getCall(1).args, ['result', 10])
