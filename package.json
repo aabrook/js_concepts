@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
+    "pretest": "bin/setup-env.sh",
     "test": "RELEASE_ENVIRONMENT=test NODE_ENV=test mocha './{,(!node_modules)}/**/__tests__/*-test.js'"
   },
   "dependencies": {
