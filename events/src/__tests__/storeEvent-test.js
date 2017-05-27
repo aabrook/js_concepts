@@ -6,7 +6,8 @@ const Sequelize = require('sequelize')
 
 const setupSequelize = () => new Sequelize('events', null, null, {
   dialect: 'sqlite',
-  storage: 'events/db/store/test/events.db'
+  storage: 'events/db/store/test/events.db',
+  logging: () => {}
 })
 
 describe('event store', () => {
