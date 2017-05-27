@@ -80,7 +80,8 @@ describe('event store', () => {
       })
     })
 
-    it('should return immediately after saving when "waitForProjection" but the projection will still run', (done) => {
+    it('should return immediately after saving when "waitForProjection" is false ' +
+      'but the projection will still run', (done) => {
       const projection = sinon.spy((event) => Promise.resolve(event))
       const secondProjection = sinon.spy((event) => Promise.resolve(event))
 
@@ -89,6 +90,28 @@ describe('event store', () => {
         event: { type: 'lols' },
         aggregate: 'testSave',
         waitForProjection: false
+      }).then((saved) => {
+        setTimeout(() => {
+          assert(projection.called)
+          assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
+          assert(secondProjection.called)
+          assert.deepEqual(secondProjection.getCall(0).args[0], { type: 'lols' })
+          done()
+        }, 10)
+
+        assert.deepEqual(saved.dataValues.event, { type: 'lols' })
+      }).catch(done)
+    })
+
+    it('should return immediately after saving when "waitForProjection" is not present ' +
+      'but the projection will still run', (done) => {
+      const projection = sinon.spy((event) => Promise.resolve(event))
+      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+
+      const { storeEvent } = subject({ sequelize, projections: [projection, secondProjection] })
+      storeEvent({
+        event: { type: 'lols' },
+        aggregate: 'testSave'
       }).then((saved) => {
         setTimeout(() => {
           assert(projection.called)
