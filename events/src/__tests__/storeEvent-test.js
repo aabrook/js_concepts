@@ -66,7 +66,7 @@ describe('event store', () => {
       const projection = sinon.spy((event) => Promise.resolve(event))
       const secondProjection = sinon.spy((event) => Promise.resolve(event))
 
-      const { storeEvent } = subject({ sequelize, projections: [projection, secondProjection] })
+      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
       return storeEvent({
         event: { type: 'lols' },
         aggregate: 'testSave',
@@ -86,7 +86,7 @@ describe('event store', () => {
       const projection = sinon.spy((event) => Promise.resolve(event))
       const secondProjection = sinon.spy((event) => Promise.resolve(event))
 
-      const { storeEvent } = subject({ sequelize, projections: [projection, secondProjection] })
+      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
       storeEvent({
         event: { type: 'lols' },
         aggregate: 'testSave',
@@ -109,7 +109,7 @@ describe('event store', () => {
       const projection = sinon.spy((event) => Promise.resolve(event))
       const secondProjection = sinon.spy((event) => Promise.resolve(event))
 
-      const { storeEvent } = subject({ sequelize, projections: [projection, secondProjection] })
+      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
       storeEvent({
         event: { type: 'lols' },
         aggregate: 'testSave'

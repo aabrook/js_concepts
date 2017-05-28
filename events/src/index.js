@@ -1,8 +1,10 @@
 const Event = require('./models/Event')
+const { assign, keys } = Object
 
 const runProjections = ({ event, projections }) =>
-  projections.map(p => p(event))
-
+  keys(projections)
+    .map(k => ({ k, p: projections[k](event) }))
+    .reduce((mp, { k, p }) => assign(mp, { [k]: p }), {})
 
 const backgroundProjections = ({ event, projections }) =>
   setTimeout(runProjections, 1, ({ event, projections }))

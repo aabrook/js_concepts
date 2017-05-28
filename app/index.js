@@ -18,11 +18,11 @@ const deletedTask = (state, { type, task }) =>
   type === 'deletedTask' ? assign({}, state, { tasks: state.tasks.filter(({ id }) => parseInt(id) === task.id) }) : state
 
 const myStore = createStore({tasks: []}, [addedTask, deletedTask])
-const projection = log()((event) =>
+const taskState = log()((event) =>
   myStore.dispatch({type: event.type, task: event.task}).state
 )
 
-const store = require('../events/src')({ sequelize, projections: [projection] })
+const store = require('../events/src')({ sequelize, projections: { taskState } })
 const config = {
   port: 8001
 }
@@ -30,6 +30,6 @@ const config = {
 const app = express()
 app.use(parser.json())
 
-app.use('/tasks', require('./routes')({ store }))
+app.use('/tasks', require('./routes')({ store, state: () => myStore.state, projections: { taskState } }))
 
 app.listen(config.port, (err) => err ? console.error(err) : console.log(`Started on port ${config.port}`))
