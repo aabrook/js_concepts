@@ -3,6 +3,7 @@ const Event = require('./models/Event')
 const runProjections = ({ event, projections }) =>
   projections.map(p => p(event))
 
+
 const backgroundProjections = ({ event, projections }) =>
   setTimeout(runProjections, 1, ({ event, projections }))
 

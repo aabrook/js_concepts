@@ -21,3 +21,16 @@ immediately returning to the caller.
 I feel waiting for projections to complete saves multiple client requests/polling. An API user
 will typically make a request and want to see the result or the action. Waiting for projections
 will allow this.
+
+# Test App (/app)
+
+This is a simple express app that ties the event store and the redux style store together.
+It uses the events store to save `Tasks` to a database and has a store that the projections
+will write to. The state of the store is returned to the user after projections have been made.
+
+To start:
+1. run `bin/setup-env.sh`
+2. run `yarn start:app`
+3. Open your favourite API tool (curl/postman/insomnia?)
+4. post to `localhost:8001/tasks` an event of the shape `{ task: 'my sweet task' }`
+5. Read the response
