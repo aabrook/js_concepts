@@ -24,7 +24,7 @@ const taskState = log((...args) => console.log('state', ...args))((event) =>
   myStore.dispatch({type: event.type, task: { text: event.task, id: event.id }}).state
 )
 
-const store = require('../events/src')({ sequelize, projections: { taskState } })
+const eventStore = require('../events/src')({ sequelize, projections: { taskState } })
 const config = {
   port: 8001
 }
@@ -32,6 +32,6 @@ const config = {
 const app = express()
 app.use(parser.json())
 
-app.use('/tasks', require('./routes')({ store, state: () => myStore.state, projections: { taskState } }))
+app.use('/tasks', require('./routes')({ store: eventStore, state: () => myStore.state, projections: { taskState } }))
 
 app.listen(config.port, (err) => err ? console.error(err) : console.log(`Started on port ${config.port}`))
