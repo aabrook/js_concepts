@@ -1,11 +1,12 @@
 const express = require('express')
+const { assign } = Object
 
 module.exports = ({ store: { allEvents, storeEvent, models: { Event } } }) => {
   const route = express()
   route.post('/', (req, res) => {
     storeEvent({
       aggregate: 'tasks',
-      event: req.body,
+      event: assign({ type: 'addedTask' }, req.body),
       waitForProjection: true
     }).then(projections =>
       res.type('application/json').send(projections[0])
@@ -23,6 +24,18 @@ module.exports = ({ store: { allEvents, storeEvent, models: { Event } } }) => {
       ).catch(e =>
         res.send(JSON.stringify(e))
       )
+  ))
+
+  route.delete('/:id', (req, res) => (
+    storeEvent({
+      aggregate: 'tasks',
+      event: { type: 'deletedTask', id: req.params['id'] },
+      waitForProjection: true
+    }).then(projections =>
+      res.type('application/json').send(projections[0])
+    ).catch(e =>
+      res.send(JSON.stringify(e))
+    )
   ))
 
   return route

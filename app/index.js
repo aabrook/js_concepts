@@ -7,13 +7,20 @@ const sequelize = new Sequelize('events', null, null, {
   storage: './events/db/store/development/events.db'
 })
 const { assign } = Object
+const { log } = require('../helpers')
 
-const addTask = (state, { type, task }) =>
-  type === 'addTask' ? assign({}, state, { tasks: [...state.tasks, task] }) : state
+const addedTask = (state, { type, task }) =>
+  type === 'addedTask' ? assign({}, state, { tasks: [...state.tasks,
+    { task, id: (state.tasks.reduce((acc, { id }) => id > acc ? id : acc, 0) + 1) }
+  ] }) : state
 
-const myStore = createStore({tasks: []}, [addTask])
-const projection = (event) =>
-  myStore.dispatch({type: 'addTask', task: event.task}).state
+const deletedTask = (state, { type, task }) =>
+  type === 'deletedTask' ? assign({}, state, { tasks: state.tasks.filter(({ id }) => parseInt(id) === task.id) }) : state
+
+const myStore = createStore({tasks: []}, [addedTask, deletedTask])
+const projection = log()((event) =>
+  myStore.dispatch({type: event.type, task: event.task}).state
+)
 
 const store = require('../events/src')({ sequelize, projections: [projection] })
 const config = {
