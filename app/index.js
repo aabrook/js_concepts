@@ -10,16 +10,18 @@ const { assign } = Object
 const { log } = require('../helpers')
 
 const addedTask = (state, { type, task }) =>
-  type === 'addedTask' ? assign({}, state, { tasks: [...state.tasks,
-    { task, id: (state.tasks.reduce((acc, { id }) => id > acc ? id : acc, 0) + 1) }
-  ] }) : state
+  type === 'addedTask' ? assign({}, state, { tasks: [...state.tasks, { task }] }) : state
 
-const deletedTask = (state, { type, task }) =>
-  type === 'deletedTask' ? assign({}, state, { tasks: state.tasks.filter(({ id }) => parseInt(id) === task.id) }) : state
+const deletedTask = (state, { type, task }) => {
+  console.log('DEBUG', state.tasks)
+  return type === 'deletedTask'
+    ? assign({}, state, { tasks: state.tasks.filter(({ id }) => id !== parseInt(task.id)) })
+    : state
+}
 
 const myStore = createStore({tasks: []}, [addedTask, deletedTask])
-const taskState = log()((event) =>
-  myStore.dispatch({type: event.type, task: event.task}).state
+const taskState = log((...args) => console.log('state', ...args))((event) =>
+  myStore.dispatch({type: event.type, task: { text: event.task, id: event.id }}).state
 )
 
 const store = require('../events/src')({ sequelize, projections: { taskState } })
