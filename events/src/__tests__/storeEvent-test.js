@@ -3,6 +3,7 @@ const assert = require('assert')
 const sinon = require('sinon')
 const subject = require('../')
 const Sequelize = require('sequelize')
+const { keys } = Object
 
 const setupSequelize = () => new Sequelize('events', null, null, {
   dialect: 'sqlite',
@@ -76,6 +77,22 @@ describe('event store', () => {
         assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
         assert(secondProjection.called)
         assert.deepEqual(secondProjection.getCall(0).args[0], { type: 'lols' })
+
+        return projections
+      })
+    })
+
+    it('should return the projections in a keyed map', () => {
+      const projection = sinon.spy((event) => Promise.resolve(event))
+      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+
+      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
+      return storeEvent({
+        event: { type: 'lols' },
+        aggregate: 'testSave',
+        waitForProjection: true
+      }).then((projections) => {
+        assert.deepEqual(keys(projections), ['projection', 'secondProjection'])
 
         return projections
       })
