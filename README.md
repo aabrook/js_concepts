@@ -34,3 +34,15 @@ To start:
 3. Open your favourite API tool (curl/postman/insomnia?)
 4. post to `localhost:8001/tasks` an event of the shape `{ task: 'my sweet task' }`
 5. Read the response
+
+# UI of the Test App (/tasks-ui)
+
+A simple create-react-app client that will let you create/delete tasks using the event sourced
+app above.
+
+To start in dev mode:
+1. Run the `/app` above
+2. In a new tab go to /tasks-ui
+3. run `yarn dev`
+4. Follow the prompts on screen and profit!
+
