@@ -143,4 +143,32 @@ describe('event store', () => {
       }).catch(done)
     })
   })
+  describe('repojections', () => {
+    it('should run all events through the projector', () => {
+      const projection = sinon.spy((event) => Promise.resolve(event))
+      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+
+      const { reproject, storeEvent } = subject({ sequelize, projections: { secondProjection } })
+      return Promise.all([storeEvent({
+        event: { type: 'lols' },
+        aggregate: 'testSave',
+      }), storeEvent({
+        event: { type: 'lmao' },
+        aggregate: 'testSave',
+      }), storeEvent({
+        event: { type: 'rofl' },
+        aggregate: 'testSave',
+      })]).then(_ =>
+        assert.equal(secondProjection.callCount, 3)
+      ).then((saves) => (
+        reproject({ projections: { projection } })
+          .then(_ => {
+            assert.equal(projection.callCount, 3)
+            assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
+            assert.deepEqual(projection.getCall(1).args[0], { type: 'lmao' })
+            assert.deepEqual(projection.getCall(2).args[0], { type: 'rofl' })
+          })
+      ))
+    })
+  })
 })

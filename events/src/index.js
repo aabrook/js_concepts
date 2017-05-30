@@ -1,5 +1,6 @@
 const Event = require('./models/Event')
 const { assign, keys } = Object
+const { parse } = JSON
 
 const runProjections = ({ event, projections }) =>
   keys(projections)
@@ -8,6 +9,11 @@ const runProjections = ({ event, projections }) =>
 
 const backgroundProjections = ({ event, projections }) =>
   setTimeout(runProjections, 1, ({ event, projections }))
+
+const reproject = (sequelize) => ({ projections }) =>
+  allEvents(sequelize)()
+    .then(events =>
+      events.map(({ dataValues: { event } }) => runProjections({ event: parse(event), projections })))
 
 const storeEvent = ({ sequelize, projections = [] }) => ({ event, aggregate, waitForProjection }) => {
   const model = Event({ sequelize })
@@ -31,5 +37,6 @@ module.exports = ({ sequelize, projections }) => ({
     Event: Event({ sequelize })
   },
   storeEvent: storeEvent({ sequelize, projections }),
-  allEvents: allEvents(sequelize)
+  allEvents: allEvents(sequelize),
+  reproject: reproject(sequelize)
 })

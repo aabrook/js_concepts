@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "pretest": "bin/setup-env.sh",
-    "test": "RELEASE_ENVIRONMENT=test NODE_ENV=test mocha './{,(!node_modules)}/**/__tests__/*-test.js'",
+    "test": "RELEASE_ENVIRONMENT=test NODE_ENV=test mocha $(find . -not -regex '.*node_modules.*' | grep __tests__/.*-test.js)",
     "start:app": "nodemon --exec \"node app/index.js\""
   },
   "dependencies": {
