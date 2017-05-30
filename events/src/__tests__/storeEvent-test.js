@@ -151,13 +151,13 @@ describe('event store', () => {
       const { reproject, storeEvent } = subject({ sequelize, projections: { secondProjection } })
       return Promise.all([storeEvent({
         event: { type: 'lols' },
-        aggregate: 'testSave',
+        aggregate: 'testSave'
       }), storeEvent({
         event: { type: 'lmao' },
-        aggregate: 'testSave',
+        aggregate: 'testSave'
       }), storeEvent({
         event: { type: 'rofl' },
-        aggregate: 'testSave',
+        aggregate: 'testSave'
       })]).then(_ =>
         assert.equal(secondProjection.callCount, 3)
       ).then((saves) => (

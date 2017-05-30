@@ -6,15 +6,15 @@ const {
 const initialState = { total: 0, transactions: [] }
 const logger = (_oldState, newState) => console.log(newState)
 const increment = (state, action) => (
-  action.type == 'INC' ?
-    assign({}, state, { total: state.total + action.amount, transactions: [...state.transactions, action] }) :
-    state
+  action.type == 'INC'
+    ? assign({}, state, { total: state.total + action.amount, transactions: [...state.transactions, action] })
+    : state
 )
 
 const decrement = (state, action) => (
-  action.type == 'DEC' ?
-    assign({}, state, { total: state.total - action.amount, transactions: [...state.transactions, action] }) :
-    state
+  action.type == 'DEC'
+    ? assign({}, state, { total: state.total - action.amount, transactions: [...state.transactions, action] })
+    : state
 )
 
 const store = createStore(initialState, [increment, decrement], [logger])
