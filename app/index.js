@@ -33,5 +33,6 @@ app.use(cors())
 app.use(parser.json())
 
 app.use('/tasks', require('./routes')({ store: eventStore, state: () => myStore.state, projections: { taskState } }))
+eventStore.reproject({ projections: { taskState } })
 
 app.listen(config.port, (err) => err ? console.error(err) : console.log(`Started on port ${config.port}`))

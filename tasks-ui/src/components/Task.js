@@ -6,7 +6,11 @@ const { floor, random } = Math
 export default class Task extends Component {
   constructor () {
     super()
-    this.state = {task: '', tasks: []}
+    axios
+      .get('http://localhost:8001/tasks')
+      .then(({ data: { tasks } }) => (this.setState({...this.state, tasks, loading: false })))
+
+    this.state = { task: '', tasks: [], loading: true }
   }
 
   changed (e) {
@@ -38,7 +42,7 @@ export default class Task extends Component {
       <div>
         <input value={this.state.task} onChange={this.changed.bind(this)} />
         <button onClick={this.addTask.bind(this)}>Add Task</button>
-        <TaskList tasks={this.state.tasks} deleteClick={this.deleteTask.bind(this)} />
+        <TaskList tasks={this.state.tasks} deleteClick={this.deleteTask.bind(this)} loading={this.state.loading} />
       </div>
     )
   }

@@ -7,8 +7,8 @@ const singleTask = (deleteAction, { text, id }) => (
   </li>
 )
 
-export default (props) => (
+export default ({ tasks, deleteClick, loading }) => (
   <ul>
-    {props.tasks.map((t) => singleTask(props.deleteClick, t.task))}
+    {!loading && tasks.map((t) => singleTask(deleteClick, t.task))}
   </ul>
 )
