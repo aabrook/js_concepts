@@ -3,5 +3,5 @@ node_js:
   - "7"
 
 script:
-  - yarn
   - yarn lint
+  - yarn test
