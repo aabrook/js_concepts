@@ -30,7 +30,7 @@ const storeEvent = ({ sequelize, projections = [] }) => ({ event, aggregate, wai
     : backgroundProjections({ event, projections }) && saved
 }
 
-const allEvents = (sequelize) => () => Event({ sequelize }).findAll()
+const allEvents = (sequelize) => () => Event({ sequelize }).findAll({ order: '"createdAt" ASC' })
 
 module.exports = ({ sequelize, projections }) => ({
   models: {

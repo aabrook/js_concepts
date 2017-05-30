@@ -149,16 +149,16 @@ describe('event store', () => {
       const secondProjection = sinon.spy((event) => Promise.resolve(event))
 
       const { reproject, storeEvent } = subject({ sequelize, projections: { secondProjection } })
-      return Promise.all([storeEvent({
+      return storeEvent({
         event: { type: 'lols' },
         aggregate: 'testSave'
-      }), storeEvent({
+      }).then(_ => storeEvent({
         event: { type: 'lmao' },
         aggregate: 'testSave'
-      }), storeEvent({
+      })).then(_ => storeEvent({
         event: { type: 'rofl' },
         aggregate: 'testSave'
-      })]).then(_ =>
+      })).then(_ =>
         assert.equal(secondProjection.callCount, 3)
       ).then((saves) => (
         reproject({ projections: { projection } })
