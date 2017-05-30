@@ -1,5 +1,4 @@
 const express = require('express')
-const { parse } = JSON
 
 module.exports = ({ projections, state, store: { allEvents, storeEvent, models: { Event } } }) => {
   const route = express()

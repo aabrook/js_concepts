@@ -8,7 +8,7 @@ export default class Task extends Component {
     super()
     axios
       .get('http://localhost:8001/tasks')
-      .then(({ data: { tasks } }) => (this.setState({...this.state, tasks, loading: false })))
+      .then(({ data: { tasks } }) => (this.setState({ ...this.state, tasks, loading: false })))
 
     this.state = { task: '', tasks: [], loading: true }
   }
