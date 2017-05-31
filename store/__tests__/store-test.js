@@ -1,22 +1,10 @@
 const assert = require('assert')
 const { describe, it } = require('mocha')
-const { createStore, functionalStore, update } = require('../')
+const { createStore, functionalStore } = require('../')
 const { assign } = Object
 
 describe('store', () => {
   describe('createStore', () => {
-    it('should not change initial state', () => {
-      const initialState = {total: 0}
-      const reducer = (state, action) => ({
-        total: state.total + 1
-      })
-      const store = createStore(initialState, [reducer])
-
-      store.dispatch(0)
-
-      assert.deepEqual({total: 0}, initialState)
-    })
-
     it('should use the reducers to update state', () => {
       const initialState = {output: []}
       const fizz = (i) => (i % 3 === 0 ? 'fizz' : '')
@@ -81,18 +69,6 @@ describe('store', () => {
   })
 
   describe('functionalStore', () => {
-    it('should not change initial state', () => {
-      const initialState = {total: 0}
-      const reducer = (state, action) => ({
-        total: state.total++
-      })
-      const store = functionalStore(initialState, [reducer])
-
-      update(store, 0)
-
-      assert.deepEqual({total: 0}, initialState)
-    })
-
     it('should use the reducers to update state', () => {
       const initialState = {output: []}
       const fizz = (i) => (i % 3 === 0 ? 'fizz' : '')
@@ -100,9 +76,9 @@ describe('store', () => {
       const buzzer = (i) => fizz(i) + buzz(i) || i
       const fizzBuzz = (state, index) => assign({}, state, {output: [...state.output, buzzer(index)]})
 
-      const store = functionalStore(initialState, [fizzBuzz])
+      const store = functionalStore({state: initialState, reducers: [fizzBuzz]})
 
-      const result = Array.from({ length: 10 }).reduce((s, _un, i) => update(s)(i + 1), store)
+      const result = Array.from({ length: 10 }).reduce((s, _un, i) => s.dispatch(i + 1), store)
       assert.deepEqual(result.state, {
         output: [
           1,
@@ -124,19 +100,19 @@ describe('store', () => {
         newState = assign({}, newState, {whatsThis: 'error'})
       )
       const store = functionalStore({}, [], [observer])
-      const result = update(store)(0)
+      const result = store.dispatch(0)
       assert.deepEqual(result.state, {})
     })
 
     it('should call all reducers', () => {
       const inc = (state, action) => action === 'inc' ? assign({}, state, { output: state.output + 1 }) : state
       const dec = (state, action) => action === 'dec' ? assign({}, state, { output: state.output - 1 }) : state
-      const store = functionalStore({ output: 0 }, [inc, dec])
+      const store = functionalStore({state: { output: 0 }, reducers: [inc, dec]})
 
-      let state = update(store)('inc')
-      state = update(state)('inc')
-      state = update(state)('dec')
-      state = update(state)('inc')
+      let state = store.dispatch('inc')
+      state = state.dispatch('inc')
+      state = state.dispatch('dec')
+      state = state.dispatch('inc')
       assert.equal(state.state.output, 2)
     })
   })

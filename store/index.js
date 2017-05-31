@@ -27,11 +27,14 @@ const createStore = (state = {}, reducers = [], observers = []) => {
   return new Store(state, reducers, observers)
 }
 
-const functionalStore = (state = {}, reducers = [], observers = []) => ({
-  state, reducers, observers
+const functionalStore = ({state = {}, reducers = [], observers = []}) => ({
+  addObserver: (observer) => functionalStore({state, reducers, observers: [...observers, observer]}),
+  addReducer: (reducer) => functionalStore({state, reducers: [...reducers, reducer], observers}),
+  dispatch: (action) => functionalStore(update({state, reducers, observers})(action)),
+  state,
+  reducers,
+  observers
 })
-
-const updateState = (observable, action) => observable.reducers.reduce((state, reducer) => reducer(state, action), observable.state)
 
 const update = (observable) => (action) => {
   const newState = updateState(observable, action)
@@ -41,6 +44,9 @@ const update = (observable) => (action) => {
   return newObservable
 }
 
+const updateState = ({ state, reducers }, action) =>
+  reducers.reduce((state, reducer) => reducer(state, action), state)
+
 module.exports = {
-  createStore, functionalStore, update
+  createStore, functionalStore
 }
