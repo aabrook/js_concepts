@@ -12,7 +12,7 @@ const Try = (fn) => (success, error = id) => (...args) => {
   try {
     return success(fn(...args))
   } catch (e) {
-    error(e)
+    return error(e)
   }
 }
 
