@@ -63,112 +63,44 @@ describe('event store', () => {
   })
 
   describe('projections', () => {
-    it('should project after events have been saved', () => {
-      const projection = sinon.spy((event) => Promise.resolve(event))
-      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+    it('should return the results of all listeners', () => {
+      const projection = sinon.spy((event) => event.concat('proj'))
+      const secondProjection = sinon.spy((event) => event.concat('second'))
 
-      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
-      return storeEvent({
-        event: { type: 'lols' },
-        aggregate: 'testSave',
-        waitForProjection: true
-      }).then((projections) => {
-        assert(projection.called)
-        assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
-        assert(secondProjection.called)
-        assert.deepEqual(secondProjection.getCall(0).args[0], { type: 'lols' })
+      const { on, emit } = subject({ sequelize })
+      on('test_event', projection)
+      on('test_event', secondProjection)
 
-        return projections
-      })
+      assert.deepEqual(emit('test_event', 'we_in_there'), ['we_in_thereproj', 'we_in_theresecond'])
+      assert(projection.called)
+      assert(secondProjection.called)
     })
 
-    it('should return the projections in a keyed map', () => {
-      const projection = sinon.spy((event) => Promise.resolve(event))
-      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+    it('should call the onAny listener with each emitted event', () => {
+      const projection = sinon.spy()
 
-      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
-      return storeEvent({
-        event: { type: 'lols' },
-        aggregate: 'testSave',
-        waitForProjection: true
-      }).then((projections) => {
-        assert.deepEqual(keys(projections), ['projection', 'secondProjection'])
+      const { onAny, emit } = subject({ sequelize })
+      onAny(projection)
+      emit('yeah', 'we have an event', 'id')
+      emit('again', 'we have a second event', 'next_id')
 
-        return projections
-      })
+      assert(projection.calledTwice)
+      assert.deepEqual(projection.getCall(0).args, ['yeah', 'we have an event', 'id'])
+      assert.deepEqual(projection.getCall(1).args, ['again', 'we have a second event', 'next_id'])
     })
 
-    it('should return immediately after saving when "waitForProjection" is false ' +
-      'but the projection will still run', (done) => {
-      const projection = sinon.spy((event) => Promise.resolve(event))
-      const secondProjection = sinon.spy((event) => Promise.resolve(event))
+    it('should return singular events onAny from emitter', () => {
+      const projection = sinon.spy((event) => event.concat('proj'))
+      const secondProjection = sinon.spy((type, event) => type.concat(event).concat('second'))
 
-      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
-      storeEvent({
-        event: { type: 'lols' },
-        aggregate: 'testSave',
-        waitForProjection: false
-      }).then((saved) => {
-        setTimeout(() => {
-          assert(projection.called)
-          assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
-          assert(secondProjection.called)
-          assert.deepEqual(secondProjection.getCall(0).args[0], { type: 'lols' })
-          done()
-        }, 10)
+      const { on, onAny, emit } = subject({ sequelize })
+      on('test_event', projection)
+      onAny(secondProjection)
 
-        assert.deepEqual(saved.dataValues.event, { type: 'lols' })
-      }).catch(done)
-    })
-
-    it('should return immediately after saving when "waitForProjection" is not present ' +
-      'but the projection will still run', (done) => {
-      const projection = sinon.spy((event) => Promise.resolve(event))
-      const secondProjection = sinon.spy((event) => Promise.resolve(event))
-
-      const { storeEvent } = subject({ sequelize, projections: { projection, secondProjection } })
-      storeEvent({
-        event: { type: 'lols' },
-        aggregate: 'testSave'
-      }).then((saved) => {
-        setTimeout(() => {
-          assert(projection.called)
-          assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
-          assert(secondProjection.called)
-          assert.deepEqual(secondProjection.getCall(0).args[0], { type: 'lols' })
-          done()
-        }, 10)
-
-        assert.deepEqual(saved.dataValues.event, { type: 'lols' })
-      }).catch(done)
-    })
-  })
-  describe('repojections', () => {
-    it('should run all events through the projector', () => {
-      const projection = sinon.spy((event) => Promise.resolve(event))
-      const secondProjection = sinon.spy((event) => Promise.resolve(event))
-
-      const { reproject, storeEvent } = subject({ sequelize, projections: { secondProjection } })
-      return storeEvent({
-        event: { type: 'lols' },
-        aggregate: 'testSave'
-      }).then(_ => storeEvent({
-        event: { type: 'lmao' },
-        aggregate: 'testSave'
-      })).then(_ => storeEvent({
-        event: { type: 'rofl' },
-        aggregate: 'testSave'
-      })).then(_ =>
-        assert.equal(secondProjection.callCount, 3)
-      ).then((saves) => (
-        reproject({ projections: { projection } })
-          .then(_ => {
-            assert.equal(projection.callCount, 3)
-            assert.deepEqual(projection.getCall(0).args[0], { type: 'lols' })
-            assert.deepEqual(projection.getCall(1).args[0], { type: 'lmao' })
-            assert.deepEqual(projection.getCall(2).args[0], { type: 'rofl' })
-          })
-      ))
+      console.log(emit('test_event', 'we_in_there'))
+      assert.deepEqual(emit('test_event', 'we_in_there'), ['we_in_thereproj', 'test_eventwe_in_theresecond'])
+      assert(projection.called)
+      assert(secondProjection.called)
     })
   })
 })
