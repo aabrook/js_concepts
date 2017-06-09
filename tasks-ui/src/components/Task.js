@@ -21,7 +21,8 @@ export default class Task extends Component {
     axios.post('http://localhost:8001/tasks', {
       task: this.state.task,
       id: floor(random() * 100)
-    }).then(({ data: { tasks } }) =>
+    }).then(e => console.log('event', e) || e
+    ).then(({ data: { tasks } }) =>
       this.setState({...this.state, tasks})
     )
   }

@@ -1,6 +1,6 @@
 const express = require('express')
 
-module.exports = ({ projections, state, store: { allEvents, storeEvent, models: { Event } } }) => {
+module.exports = ({ store: { allEvents } }) => {
   const route = express()
   route.get('/', (_req, res) => (
     allEvents()
