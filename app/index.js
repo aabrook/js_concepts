@@ -25,9 +25,10 @@ const taskState = log((...args) => console.log('state', ...args))((event) =>
 )
 
 const eventStore = require('../events/src')({ sequelize })
-eventStore.on('deletedTask', deletedTask)
-eventStore.on('addedTask', addedTask)
-eventStore.onAny((type, payload) => console.log('DEBUG', type, payload))
+eventStore.on('deletedTask', taskState)
+eventStore.on('addedTask', taskState)
+eventStore.on('init', taskState)
+eventStore.onAny((type, payload, id) => console.log('DEBUG', type, payload) || payload)
 
 const config = {
   port: 8001
@@ -42,7 +43,7 @@ app.use('/events', require('./routes/events')({ store: eventStore, state: () => 
 eventStore.allEvents()
 .then(events => events.map(({ dataValues: { event } }) => parse(event)))
 .then(events =>
-  events.map(event => eventStore.emit(event.type, event))
+  events.map(event => eventStore.emit('init', event))
 ).then(events => console.log(events))
 
 app.listen(config.port, (err) => err ? console.error(err) : console.log(`Started on port ${config.port}`))

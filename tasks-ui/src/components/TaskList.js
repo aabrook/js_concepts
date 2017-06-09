@@ -9,6 +9,6 @@ const singleTask = (deleteAction, { text, id }) => (
 
 export default ({ tasks, deleteClick, loading }) => (
   <ul>
-    {!loading && tasks.map((t) => singleTask(deleteClick, t.task))}
+    {!loading && tasks && tasks.map((t) => singleTask(deleteClick, t.task))}
   </ul>
 )
