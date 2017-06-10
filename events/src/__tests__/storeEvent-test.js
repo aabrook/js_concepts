@@ -3,7 +3,6 @@ const assert = require('assert')
 const sinon = require('sinon')
 const subject = require('../')
 const Sequelize = require('sequelize')
-const { keys } = Object
 
 const setupSequelize = () => new Sequelize('events', null, null, {
   dialect: 'sqlite',
@@ -101,6 +100,34 @@ describe('event store', () => {
       assert.deepEqual(emit('test_event', 'we_in_there'), ['we_in_thereproj', 'test_eventwe_in_theresecond'])
       assert(projection.called)
       assert(secondProjection.called)
+    })
+
+    it('should remove listeners from an event', () => {
+      const projection = sinon.spy((event) => event.concat('proj'))
+      const secondProjection = sinon.spy((type, event) => type.concat(event).concat('second'))
+
+      const { on, onAny, emit, remove } = subject({ sequelize })
+      on('test_event', projection)
+      onAny(secondProjection)
+      remove('test_event', projection)
+      emit('test_event', 'should_not_happen')
+
+      assert(!projection.called)
+      assert(secondProjection.called)
+    })
+
+    it('should remove listeners from onAny event', () => {
+      const projection = sinon.spy((event) => event.concat('proj'))
+      const secondProjection = sinon.spy((type, event) => type.concat(event).concat('second'))
+
+      const { on, onAny, emit, removeAny } = subject({ sequelize })
+      on('test_event', projection)
+      onAny(secondProjection)
+      removeAny(secondProjection)
+      emit('test_event', 'should_not_happen')
+
+      assert(projection.called)
+      assert(!secondProjection.called)
     })
   })
 })

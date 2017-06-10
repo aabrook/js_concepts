@@ -23,12 +23,15 @@ const myStore = createStore({tasks: []}, [addedTask, deletedTask])
 const taskState = log((...args) => console.log('state', ...args))((event) =>
   myStore.dispatch({type: event.type, task: { text: event.task, id: event.id }}).state
 )
+const stateUpdated = (fn) => (...args) => (
+  eventStore.emit('stateUpdated', fn(...args), args.slice(-1)[0])[0]
+)
 
 const eventStore = require('../events/src')({ sequelize })
-eventStore.on('deletedTask', taskState)
-eventStore.on('addedTask', taskState)
+eventStore.on('deletedTask', stateUpdated(taskState))
+eventStore.on('addedTask', stateUpdated(taskState))
 eventStore.on('init', taskState)
-eventStore.onAny((type, payload, id) => console.log('DEBUG', type, payload) || payload)
+eventStore.onAny(log()((type, payload, id) => payload))
 
 const config = {
   port: 8001

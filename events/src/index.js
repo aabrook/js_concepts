@@ -1,7 +1,8 @@
 const Event = require('./models/Event')
-const { assign, keys } = Object
-const { parse } = JSON
+const { assign } = Object
 const uuid = require('uuid/v4')
+
+const drop = (ary = [], val) => ary.includes(val) ? ary.splice(ary.indexOf(val), 1) && ary : ary
 
 const init = () => {
   let listeners = {}
@@ -9,12 +10,15 @@ const init = () => {
 
   return {
     on: (type, fn) => assign(listeners, {[type]: [...(listeners[type] || []), fn]}),
-    onAny: (fn) => onAny = [...onAny, fn],
-    emit: (type, payload, id = uuid()) => (
-      listeners[type]
-        ? listeners[type].map(fn => fn(payload, id))
-        : []
-    ).concat(onAny.map(fn => fn(type, payload, id)))
+    remove: (type, fn) => assign(listeners, {[type]: drop(listeners[type], fn)}),
+    onAny: (fn) => onAny.push(fn),
+    removeAny: (fn) => drop(onAny, fn),
+    emit: (type, payload, id = uuid()) => {
+      return (listeners[type]
+          ? listeners[type].map(fn => fn(payload, id))
+          : []
+      ).concat(onAny.map(fn => fn(type, payload, id)))
+    }
   }
 }
 
@@ -35,6 +39,6 @@ module.exports = ({ sequelize }) => (
       Event: Event({ sequelize })
     },
     storeEvent: storeEvent({ sequelize }),
-    allEvents: allEvents(sequelize),
+    allEvents: allEvents(sequelize)
   }, init())
 )

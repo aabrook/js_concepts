@@ -22,7 +22,6 @@ module.exports = {
   compose,
   prepend,
   log,
-  debug: log('DEBUG'),
   id,
   Try
 }
