@@ -1,7 +1,7 @@
 const { before, beforeEach, describe, it } = require('mocha')
 const assert = require('assert')
 const sinon = require('sinon')
-const subject = require('../')
+const subject = require('../index')
 const Sequelize = require('sequelize')
 
 const setupSequelize = () => new Sequelize('events', null, null, {

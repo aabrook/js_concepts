@@ -42,7 +42,7 @@ app above.
 
 To start in dev mode:
 1. Run the `/app` above
-2. In a new tab go to /tasks-ui
+2. In a new tab go to /app/tasks-ui
 3. run `yarn dev`
 4. Follow the prompts on screen and profit!
 

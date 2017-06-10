@@ -27,7 +27,7 @@ const stateUpdated = (fn) => (...args) => (
   eventStore.emit('stateUpdated', fn(...args), args.slice(-1)[0])[0]
 )
 
-const eventStore = require('../events/src')({ sequelize })
+const eventStore = require('../events')({ sequelize })
 eventStore.on('deletedTask', stateUpdated(taskState))
 eventStore.on('addedTask', stateUpdated(taskState))
 eventStore.on('init', taskState)
