@@ -4,6 +4,11 @@ const prepend = (padding, minLength, s) => (
     : s
 )
 
+const words = (s) => s.split(' ')
+const unwords = (ary) => ary.join(' ')
+
 module.exports = {
-  prepend
+  prepend,
+  words,
+  unwords
 }
