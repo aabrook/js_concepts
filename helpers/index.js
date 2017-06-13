@@ -32,11 +32,14 @@ const curry = (f) => {
   return build
 }
 
+const map = (f, [h, ...t]) => h ? [f(h), ...map(f, t)] : []
+
 module.exports = {
   $,
   compose,
   curry,
   flip,
+  map,
   prepend,
   log,
   id,

@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha')
 const assert = require('assert')
 const sinon = require('sinon')
-const { $, compose, curry, flip } = require('../')
+const { $, compose, curry, flip, id, map } = require('../')
 
 describe('function helpers', () => {
   describe('compose', () => {
@@ -45,5 +45,15 @@ describe('function helpers', () => {
       assert.equal(typeof add1(2), 'function')
       assert.equal(add1(2, 3), 6)
     })
+  })
+
+  describe('map', () => {
+    it('should apply the function to all input', () => (
+      assert.deepEqual(map(a => a * a, [1, 2, 3, 4]), [1, 4, 9, 16])
+    ))
+
+    it('should not break with an empty input', () => (
+      assert.deepEqual(map(id, []), [])
+    ))
   })
 })
