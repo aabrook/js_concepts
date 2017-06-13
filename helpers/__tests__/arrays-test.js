@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { cycle, zip, zipWith } = require('../arrays')
+const { cycle, replicate, zip, zipWith } = require('../arrays')
 
 describe('array helpers', () => {
   it('should merge arrays with zip', () => (
@@ -19,10 +19,22 @@ describe('array helpers', () => {
   ))
 
   it('should not care if there\'s only 1 array value', () => (
-    assert.deepEqual(cycle(5)([1]), [1, 1, 1, 1, 1])
+    assert.deepEqual(cycle(5, [1]), [1, 1, 1, 1, 1])
   ))
 
   it('should assign undefined when the array is empty', () => (
     assert.deepEqual(cycle(5)([]), [undefined, undefined, undefined, undefined, undefined])
+  ))
+
+  it('should repeat the input 5 times', () => (
+    assert.deepEqual(replicate(5, 1), [1, 1, 1, 1, 1])
+  ))
+
+  it('should curry replicate', () => (
+    assert.deepEqual(replicate(5)(1), [1, 1, 1, 1, 1])
+  ))
+
+  it('should return an empty array with 0 replications', () => (
+    assert.deepEqual(replicate(0, 1), [])
   ))
 })
