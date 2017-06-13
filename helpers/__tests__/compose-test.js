@@ -36,6 +36,9 @@ describe('function helpers', () => {
     it('should flip a curried function\'s args', () => (
       assert(flip(a => b => a * a * b)(3)(1), 3)
     ))
+    it('should flip a regular function\'s args', () => (
+      assert(flip((a, b) => a * a * b, 3, 1), 3)
+    ))
   })
 
   describe('curry', () => {
