@@ -18,7 +18,10 @@ const Try = (fn) => (success, error = id) => (...args) => {
 
 const compose = (...funcs) => funcs.reduce((acc, fn) => (...args) => acc(fn(...args)))
 
+const $ = (f) => (a) => f(a)
+
 module.exports = {
+  $,
   compose,
   prepend,
   log,
