@@ -18,6 +18,10 @@ describe('array helpers', () => {
     assert.deepEqual(cycle(5)([1, 2]), [1, 2, 1, 2, 1])
   ))
 
+  it('should append to the array a cycling recursion with a different length', () => (
+    assert.deepEqual(cycle(4)([1, 2]), [1, 2, 1, 2])
+  ))
+
   it('should not care if there\'s only 1 array value', () => (
     assert.deepEqual(cycle(5, [1]), [1, 1, 1, 1, 1])
   ))

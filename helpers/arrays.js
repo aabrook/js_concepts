@@ -2,7 +2,7 @@ const { curry } = require('./')
 
 const zip = (a, b) => a.map((v, i) => [v, b[i]])
 const zipWith = (f, a, b) => a.map((v, i) => f(v, b[i]))
-const cycle = (count, [h, ...t]) => count > 0 ? [...(cycle(count - 1, [...t, h])), h] : []
+const cycle = (count, [h, ...t], result = []) => count > 0 ? cycle(count - 1, [...t, h], [...result, h]) : result
 const replicate = (length, value, data = []) => length ? replicate(length - 1, value, [...data, value]) : data
 
 module.exports = {

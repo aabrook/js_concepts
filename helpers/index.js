@@ -32,7 +32,7 @@ const curry = (f) => {
   return build
 }
 
-const map = (f, [h, ...t]) => h ? [f(h), ...map(f, t)] : []
+const map = (f, a) => a.length ? [f(a[0]), ...map(f, a.slice(1))] : []
 
 module.exports = {
   $: curry($),
