@@ -1,7 +1,7 @@
 const { describe, it } = require('mocha')
 const assert = require('assert')
 const sinon = require('sinon')
-const { $, compose } = require('../')
+const { $, compose, curry, flip } = require('../')
 
 describe('function helpers', () => {
   describe('compose', () => {
@@ -30,5 +30,20 @@ describe('function helpers', () => {
     it('should apply the function to the arguments provided - in map', () => (
       assert.deepEqual([1, 2, 3, 4, 5].map($(a => a * a)), [1, 4, 9, 16, 25])
     ))
+  })
+
+  describe('flip', () => {
+    it('should flip a curried function\'s args', () => (
+      assert(flip(a => b => a * a * b)(3)(1), 3)
+    ))
+  })
+
+  describe('curry', () => {
+    it('should evaluate when enough arguments are provided', () => {
+      const sum3 = (a, b, c) => a + b + c
+      const add1 = curry(sum3)(1)
+      assert.equal(typeof add1(2), 'function')
+      assert.equal(add1(2, 3), 6)
+    })
   })
 })

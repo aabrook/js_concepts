@@ -20,9 +20,23 @@ const compose = (...funcs) => funcs.reduce((acc, fn) => (...args) => acc(fn(...a
 
 const $ = (f) => (a) => f(a)
 
+const flip = (f) => (b) => (a) => f(b, a)
+
+const curry = (f) => {
+  const build = (...args) => (
+    args.length >= f.length
+      ? f(...args)
+      : (...argv) => build(...args, ...argv)
+  )
+
+  return build
+}
+
 module.exports = {
   $,
   compose,
+  curry,
+  flip,
   prepend,
   log,
   id,
