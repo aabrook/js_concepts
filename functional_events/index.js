@@ -4,7 +4,7 @@ const dropItem = (a, i) => a.filter(fn => fn !== i)
 
 module.exports = {
   emit: (a, s) => s.map(([v, st]) => {
-    (st.listeners[a] || []).map(f => f(v))
+    (st.listeners[a] || []).map(f => f([v, st]))
     return [v, st]
   }),
   on: (a, e, s) => s.map(([_, st]) => (

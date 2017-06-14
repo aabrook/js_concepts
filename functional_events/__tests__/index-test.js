@@ -54,7 +54,14 @@ describe.only('functional events', () => {
 
     const state = events.emit('run-me', subject.map(([_, st]) => ['test-action', st]))
     assert(t.called)
-    assert.deepEqual(t.getCall(0).args, ['test-action'])
+    assert.deepEqual(t.getCall(0).args, [[
+      'test-action', {
+        listeners: {
+          'run-me': [t],
+          'not-me': [f]
+        }
+      }
+    ]])
     assert(!f.called)
 
     state.map(([v, st]) => {

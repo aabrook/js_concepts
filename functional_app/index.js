@@ -4,8 +4,9 @@ const { on, emit } = require('../functional_events')
 const { assign } = Object
 
 let globalState =
-  on('addToState', (task) => console.log(task), State.of({ listeners: {}, tasks: ['init'] }))
-  .chain((st) => on('root', (state) => console.log('Current State', state), State(st)))
+  State.of({ listeners: {}, tasks: ['init'] })
+  .chain(st => on('addToState', ([_, state]) => console.log(state), State(st)))
+  .chain(st => on('root', ([_, state]) => console.log('Current State', state), State(st)))
 
 const addTask = (list = [], task) => [...list, task]
 const appendToState = (task, [_, st]) =>
@@ -13,25 +14,23 @@ const appendToState = (task, [_, st]) =>
 
 const app = express()
 const main = () => {
-  globalState.map(([_, s]) => console.log('a', s.tasks))
+  globalState.map(([_, s]) => console.log('a', s))
 
   app.get('/', (req, res) => (
     globalState = globalState
       .chain(([_, state]) => State([res.send({ tasks: state.tasks }), state]))
-      .chain((state) => {
-        console.log('b', state[1])
-        return emit('root', State(state))
-      })
+      .chain((state) =>
+        emit('root', State(state))
+      )
   ))
 
   app.post('/:addToState', (req, res) => (
     globalState = globalState
       .chain((state) => appendToState(req.params['addToState'], state))
       .chain(([task, st]) => State([res.send(task), st]))
-      .chain((state) => {
-        console.log('c', state[1])
-        return emit('addToState', State(state))
-      })
+      .chain((state) =>
+        emit('addToState', State(state))
+      )
   ))
 }
 
