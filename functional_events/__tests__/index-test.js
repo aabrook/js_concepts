@@ -8,9 +8,16 @@ const id = a => a
 describe.only('functional events', () => {
   it('should add listeners with on', () => {
     const t = sinon.spy()
-    const subject = events.on('test-state', t, State.of({ listeners: {} }))
+    const t2 = sinon.spy()
+    const setup = events.on('test-state', t, State.of({ listeners: {} }))
+    const subject = events.on('second-state', t2, setup)
     subject.map(([a, st]) => {
-      assert.deepEqual([a, st], [t, { listeners: { 'test-state': [t] } }])
+      assert.deepEqual([a, st], [
+        t2,
+        {
+          listeners: { 'test-state': [t], 'second-state': [t2] }
+        }
+      ])
       return [a, st]
     })
   })

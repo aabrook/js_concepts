@@ -3,11 +3,12 @@ const { assign } = Object
 const dropItem = (a, i) => a.filter(fn => fn !== i)
 
 module.exports = {
-  emit: (a, s) => s.map(([v, st]) => (
-    st.listeners[a].map(f => f(v)) && [v, st]
-  )),
+  emit: (a, s) => s.map(([v, st]) => {
+    (st.listeners[a] || []).map(f => f(v))
+    return [v, st]
+  }),
   on: (a, e, s) => s.map(([_, st]) => (
-    [e, assign({}, st, { listeners: { [a]: [...(st.listeners[a] || []), e] } })]
+    [e, assign({}, st, { listeners: assign({}, st.listeners, { [a]: [...(st.listeners[a] || []), e] }) })]
   )),
   onAny: (e, s) => s.map(([_, st]) => (
     [e, assign({}, st, { anyListeners: [...(st.anyListeners || []), e] })]
