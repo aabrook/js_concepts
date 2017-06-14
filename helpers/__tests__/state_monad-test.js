@@ -15,7 +15,7 @@ describe('State Monad', () => {
     .chain(([a, s]) => State([a, assign({}, {hello: 'world'}, s)]))
     .chain(([a, s]) => State([a, assign({}, {nextSet: 'Yay'}, s)]))
     .map(([a, s]) =>
-      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(v, {})
+      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(a, {})
     )
   ))
 
@@ -24,7 +24,7 @@ describe('State Monad', () => {
     .map(([a, s]) => ([a, assign({}, {hello: 'world'}, s)]))
     .map(([a, s]) => ([a, assign({}, {nextSet: 'Yay'}, s)]))
     .map(([a, s]) =>
-      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(v, {})
+      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(a, {})
     )
   ))
 

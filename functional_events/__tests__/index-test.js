@@ -29,7 +29,7 @@ describe.only('functional events', () => {
       assert.equal(v, t)
       assert.deepEqual(st, {
         listeners: {
-          'run-me': [ f]
+          'run-me': [f]
         }
       })
     })
@@ -45,7 +45,7 @@ describe.only('functional events', () => {
       }
     })
 
-    const state = events.emit('run-me', subject.map(([_ , st]) => ['test-action', st]))
+    const state = events.emit('run-me', subject.map(([_, st]) => ['test-action', st]))
     assert(t.called)
     assert.deepEqual(t.getCall(0).args, ['test-action'])
     assert(!f.called)

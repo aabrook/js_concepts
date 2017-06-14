@@ -8,6 +8,6 @@ const State = ([v, x] = [{}, {}]) => ({
   join: (a) => a.concat([v, x])
 })
 
-State.of = (x => State([{}, x]))
+State.of = (x) => State([{}, x])
 
 module.exports = State
