@@ -5,8 +5,8 @@ const { assign } = Object
 
 let globalState =
   State.of({ listeners: {}, tasks: ['init'] })
-  .chain(st => on('addToState', ([_, state]) => console.log(state), State(st)))
-  .chain(st => on('root', ([_, state]) => console.log('Current State', state), State(st)))
+  .chain(st => on('addedToState', ([_, state]) => console.log(state), State(st)))
+  .chain(st => on('rootViewed', ([_, state]) => console.log('Current State', state), State(st)))
 
 const addTask = (list = [], task) => [...list, task]
 const appendToState = (task, [_, st]) =>
@@ -20,7 +20,7 @@ const main = () => {
     globalState = globalState
       .chain(([_, state]) => State([res.send({ tasks: state.tasks }), state]))
       .chain((state) =>
-        emit('root', State(state))
+        emit('rootViewed', State(state))
       )
   ))
 
@@ -29,7 +29,7 @@ const main = () => {
       .chain((state) => appendToState(req.params['addToState'], state))
       .chain(([task, st]) => State([res.send(task), st]))
       .chain((state) =>
-        emit('addToState', State(state))
+        emit('addedToState', State(state))
       )
   ))
 }
