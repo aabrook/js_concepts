@@ -55,4 +55,10 @@ describe('State Monad', () => {
         return s
       })
   })
+
+  it('should be able to join states', () => (
+    State.of({ a: 'b' })
+      .join(State.of({ b: 'c' }))
+      .map(s => assert.deepEqual(s, [{}, { a: 'b', b: 'c' }]))
+  ))
 })
