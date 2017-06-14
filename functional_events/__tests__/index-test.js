@@ -5,7 +5,7 @@ const State = require('../../helpers/state_monad')
 
 const id = a => a
 
-describe.only('functional events', () => {
+describe('functional events', () => {
   it('should add listeners with on', () => {
     const t = sinon.spy()
     const t2 = sinon.spy()
