@@ -1,37 +1,35 @@
-const express = require('express')
+const readline = require('readline-sync')
 const State = require('../helpers/state_monad')
 const { on, emit } = require('../functional_events')
 const { assign } = Object
 
-let globalState =
-  State.of({ listeners: {}, tasks: ['init'] })
-  .chain(st => on('addedToState', ([_, state]) => console.log(state), State(st)))
-  .chain(st => on('rootViewed', ([_, state]) => console.log('Current State', state), State(st)))
+const prompt = ([message, state]) => [console.log(message), state]
+const addTask = ([task, state]) => [task, assign({}, state, { tasks: [...state.tasks, task] })]
+const promptAndAddTask = ([v, s]) => (
+    State(prompt(['Task:', s]))
+    .chain(([_v, s]) => State(addTask([readline.prompt(), s])))
+    .chain((s) => emit('addedTask', State(s)))
+)
+const printTasks = ([v, s]) => State([console.log(s.tasks), s])
+const quit = () => console.log('Bye bye!') || process.exit(0)
 
-const addTask = (list = [], task) => [...list, task]
-const appendToState = (task, [_, st]) =>
-  State([task, assign({}, st, { tasks: addTask(st.tasks, task) })])
+const promptResponses = ({
+  'y': promptAndAddTask,
+  'n': printTasks,
+  'q': quit
+})
 
-const app = express()
-const main = () => {
-  globalState.map(([_, s]) => console.log('a', s))
+const buildTaskList = (st) => (
+  st.chain(([_v, s]) => State(prompt(['Add task? y/n/q', s])))
+  .chain(([v, s]) => State([readline.prompt(), s]))
+  .chain(([v, s]) => promptResponses[v]([v, s]))
+)
 
-  app.get('/', (req, res) => (
-    globalState = globalState
-      .chain(([_, state]) => State([res.send({ tasks: state.tasks }), state]))
-      .chain((state) =>
-        emit('rootViewed', State(state))
-      )
-  ))
+const main = (st = State.of({})) => (
+  main(buildTaskList(st))
+)
 
-  app.post('/:addToState', (req, res) => (
-    globalState = globalState
-      .chain((state) => appendToState(req.params['addToState'], state))
-      .chain(([task, st]) => State([res.send(task), st]))
-      .chain((state) =>
-        emit('addedToState', State(state))
-      )
-  ))
-}
-
-app.listen(3000, () => console.log('listening on 3000') || main())
+main(
+  State.of({ tasks: [], listeners: {} })
+  .chain((s) => on('addedTask', ([v, s]) => console.log('Added', v), State(s)))
+)
