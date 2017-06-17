@@ -1,8 +1,9 @@
 const readline = require('readline-sync')
 const State = require('../helpers/state_monad')
-const { on, emit } = require('../functional_events')
+const { on, onAny, emit } = require('../functional_events')
 const { assign } = Object
 
+let eventStore = []
 const print = ([message, state]) => ([console.log(message), state])
 
 const printTasks = ([v, s]) => State(print([s.tasks.join('\n'), s]))
@@ -15,9 +16,12 @@ const promptAndAddTask = ([v, s]) => (
   .chain((s) => emit('addedTask', State(s)))
 )
 
+const viewEvents = ([v, s]) => State(print([eventStore, s]))
+
 const promptResponses = ({
   'y': promptAndAddTask,
   'n': printTasks,
+  'v': viewEvents,
   'q': quit
 })
 
@@ -28,7 +32,7 @@ const initialPrompt = (l) => (
 )
 
 const buildTaskList = (st) => (
-  st.chain(([_v, s]) => State(print(['Add task? y/n/q', s])))
+  st.chain(([_v, s]) => State(print(['Add task? y/n/v/q', s])))
   .chain(([v, s]) => State([readline.prompt(), s]))
   .chain(([v, s]) => emit(`selected${v.toUpperCase()}`, State([v, s])))
   .chain(([v, s]) => initialPrompt(v)([v, s]))
@@ -37,8 +41,11 @@ const buildTaskList = (st) => (
 const main = (st) => (
   main(buildTaskList(st))
 )
+
 main(
-  State.of({ tasks: [], listeners: {} })
+  State.of({ tasks: [], anyListeners: [], listeners: {} })
   .chain((s) => on('addedTask', ([v, s]) => console.log(`Added --- ${v} ---`), State(s)))
   .chain((s) => on('selectedQ', ([v, s]) => console.log('Bye bye'), State(s)))
+  .chain((s) => on('selectedY', ([v, s]) => console.log('Tasks so far', s.tasks), State(s)))
+  .chain((s) => onAny(([v, s]) => (eventStore = [...eventStore, v]), State(s)))
 )

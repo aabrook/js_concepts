@@ -22,6 +22,42 @@ describe('functional events', () => {
     })
   })
 
+  it('should add listeners on any event using \'onAny\'', () => {
+    const t = sinon.spy()
+    const t2 = sinon.spy()
+    const setup = events.onAny(t, State.of({ anyListeners: [] }))
+    const subject = events.onAny(t2, setup)
+    subject.map(([a, st]) => {
+      assert.deepEqual([a, st], [
+        t2,
+        {
+          anyListeners: [t, t2]
+        }
+      ])
+      return [a, st]
+    })
+  })
+
+  it('should emit any onAny events', () => {
+    const t = sinon.spy()
+    const t2 = sinon.spy()
+    const t3 = sinon.spy()
+    const setup = events.onAny(t, State.of({ listeners: {}, anyListeners: [] }))
+    const withOn = events.on('not-to-run', t3, setup)
+    const subject = events.onAny(t2, withOn)
+
+    events.emit('my-test-event', subject)
+    assert(t.called)
+    assert(t2.called)
+    assert(!t3.called)
+    assert.deepEqual(t.getCall(0).args, [
+      [t2, { listeners: { 'not-to-run': [t3] }, anyListeners: [t, t2] }]
+    ])
+    assert.deepEqual(t2.getCall(0).args, [
+      [t2, { listeners: { 'not-to-run': [t3] }, anyListeners: [t, t2] }]
+    ])
+  })
+
   it('should remove listeners', () => {
     const t = sinon.spy(id)
     const f = sinon.spy(id)
