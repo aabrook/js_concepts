@@ -35,7 +35,7 @@ To start:
 4. post to `localhost:8001/tasks` an event of the shape `{ task: 'my sweet task' }`
 5. Read the response
 
-# UI of the Test App (/tasks-ui)
+# UI of the Test App (/app/tasks-ui)
 
 A simple create-react-app client that will let you create/delete tasks using the event sourced
 app above.
@@ -46,3 +46,13 @@ To start in dev mode:
 3. run `yarn dev`
 4. Follow the prompts on screen and profit!
 
+# Function Event Emitter (/functional_events)
+
+In an effort to greater develop my understanding of events and functional programming I've created
+an emitter that does not store any local state. The goal is to use a recursive approach to maintain
+state.
+
+# Functional App (/functional_app)
+
+Using the functional emitter, and the state monad from the helpers, this is a simple application that
+prompts and adds items to a list. Events are emitted when an item is added and on quit.
