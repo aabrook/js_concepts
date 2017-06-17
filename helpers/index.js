@@ -43,5 +43,5 @@ module.exports = {
   prepend: curry(prepend),
   log: log,
   id,
-  Try
+  Try: curry(Try)
 }
