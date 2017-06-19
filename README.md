@@ -54,5 +54,6 @@ state.
 
 # Functional App (/functional_app)
 
-Using the functional emitter, and the state monad from the helpers, this is a simple application that
+Using the functional emitter, and the state monad from the helpers (on further learning this is not actually
+a state monad. Further readings required), this is a simple application that
 prompts and adds items to a list. Events are emitted when an item is added and on quit.
