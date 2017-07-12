@@ -1,64 +1,125 @@
 const assert = require('assert')
 const State = require('../state_monad')
-const { assign } = Object
 
 const id = a => a
 
 describe('State Monad', () => {
-  it('should create a default State with of', () => (
-    State.of({my: 'test'})
-    .map(([v, s]) => assert.deepEqual(s, {my: 'test'}) && assert.deepEqual(v, {}))
-  ))
-
-  it('should chain States', () => (
-    State.of({})
-    .chain(([a, s]) => State([a, assign({}, {hello: 'world'}, s)]))
-    .chain(([a, s]) => State([a, assign({}, {nextSet: 'Yay'}, s)]))
-    .map(([a, s]) =>
-      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(a, {})
+  it('should run and return the result of the state function', () => (
+    assert.deepEqual(
+      State(s => [s, s * 2]).runState(5),
+      [5, 10]
     )
   ))
 
-  it('should map', () => (
-    State.of({})
-    .map(([a, s]) => ([a, assign({}, {hello: 'world'}, s)]))
-    .map(([a, s]) => ([a, assign({}, {nextSet: 'Yay'}, s)]))
-    .map(([a, s]) =>
-      assert.deepEqual(s, {hello: 'world', nextSet: 'Yay'}) && assert.deepEqual(a, {})
+  it('should create a default state with the value in the left', () => (
+    assert.deepEqual(
+      State.of(5).runState(8),
+      [5, 8]
     )
   ))
 
-  it('should match id laws', () => (
-    State.of('abcd')
-      .map(id)
-      .map(s => {
-        id(State.of('abcd'))
-          .map(s2 =>
-            assert.deepEqual(s, s2)
-          )
-
-        return s
-      })
+  it('should use map on the first tuple pair', () => (
+    assert.deepEqual(
+      State.of(2)
+        .map(a => a + 4)
+        .runState(5),
+      [6, 5])
   ))
 
-  it('should match composition laws', () => {
-    const f = ([x, s]) => [assign({}, x, {a: 'a'}), assign({}, s, {b: 'b'})]
-    const g = ([x, s]) => [assign({}, x, {c: 'c'}), assign({}, s, {d: 'd'})]
-    State.of({})
-      .map(f)
-      .map(g)
-      .map(s => {
-        State.of({})
-          .map(x => f(g(x)))
-          .map(x => assert.deepEqual(s, x))
+  it('should abide by id law', () => (
+    assert.deepEqual(
+      State(s => [s, s])
+        .map(id)
+        .runState(5),
+      [5, 5]
+    )
+  ))
 
-        return s
-      })
+  it('should abide by composition law', () => {
+    const double = a => a * 2
+    const add2 = a => a + 2
+
+    assert.deepEqual(
+      State(s => [s, s])
+        .map(double)
+        .map(add2)
+        .runState(5),
+      State(s => [s, s])
+        .map(x => add2(double(x)))
+        .runState(5)
+    )
   })
 
-  it('should be able to join states', () => (
-    State.of({ a: 'b' })
-      .join(State.of({ b: 'c' }))
-      .map(s => assert.deepEqual(s, [{}, { a: 'b', b: 'c' }]))
+  it('should chain states together', () => (
+    assert.deepEqual(
+      State.of(0)
+        .chain(l => State(r => [r * 2, l]))
+        .runState(5),
+      [10, 0]
+    )
   ))
+
+  it('should work with monad id', () => (
+    assert.deepEqual(
+      State.of(5)
+        .chain(a => State.of(a))
+        .runState(0),
+      State.of(5).runState(0)
+    )
+  ))
+
+  it('should return a >>= k  =  k a', () => (
+    assert.deepEqual(
+      State.of(5)
+        .chain(s => State(ss => [s, ss]))
+        .runState(6),
+      (s => ss => [s, ss])(5)(6)
+    )
+  ))
+
+  it('should extract the state function', () => (
+    assert.equal(
+      State(id).extract(),
+      id
+    )
+  ))
+
+  it('should apply the function in the state to the state provided', () => (
+    assert.deepEqual(
+      State.of(a => a + 1).ap(State.of(0)).runState(4),
+      [1, 4]
+    )
+  ))
+
+  it('should abide by applicative id law', () => (
+    assert.deepEqual(
+      State.of(id).ap(State(s => [s, s])).runState(4),
+      [4, 4]
+    )
+  ))
+
+  it('should abide by applicative homomorphism law', () => {
+    const double = a => a * 2
+    assert.deepEqual(
+      State.of(double)
+        .ap(State.of(5))
+        .runState(3),
+      State.of(double(5))
+        .runState(3)
+    )
+  })
+
+  it('should abide by applicative composition law', () => {
+    const double = a => a * 2
+    const add2 = a => a + 2
+    assert.deepEqual(
+      State.of(a => b => x => a(b(x)))
+        .ap(State.of(double))
+        .ap(State.of(add2))
+        .ap(State.of(5))
+        .runState(0),
+      State.of(double(add2(5)))
+        .runState(0)
+    )
+  })
 })
