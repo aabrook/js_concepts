@@ -22,6 +22,8 @@ const State = (st) => ({
     const [l , _] = State(st).runState(ss)
     return [l, s]
   }),
+  exec: (x) => st(x)[1],
+  eval: (x) => st(x)[0],
   extract: () => (st),
   inspect: () => `State(${st})`
 })

@@ -34,6 +34,22 @@ describe('State Monad', () => {
     )
   ))
 
+  it.only('should return the final state when executed', () => (
+    assert.equal(
+      State.of('hello')
+      .chain(s => State(state => [s.toUpperCase(), s.concat(', ').concat(state)]))
+      .exec('Jo'),
+      'hello, Jo'
+    )
+  ))
+
+  it.only('should return the final result of the functions', () => (
+      State.of('hello')
+      .chain(s => State(state => [s.toUpperCase(), s.concat(', ').concat(state)]))
+      .eval('Jo'),
+      'HELLO'
+  ))
+
   it('should return the right side of the tuple', () => (
     assert.deepEqual(
       State.of(5).get().map(s => {
