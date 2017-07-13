@@ -34,7 +34,7 @@ describe('State Monad', () => {
     )
   ))
 
-  it.only('should return the final state when executed', () => (
+  it('should return the final state when executed', () => (
     assert.equal(
       State.of('hello')
       .chain(s => State(state => [s.toUpperCase(), s.concat(', ').concat(state)]))
@@ -43,7 +43,7 @@ describe('State Monad', () => {
     )
   ))
 
-  it.only('should return the final result of the functions', () => (
+  it('should return the final result of the functions', () => (
       State.of('hello')
       .chain(s => State(state => [s.toUpperCase(), s.concat(', ').concat(state)]))
       .eval('Jo'),

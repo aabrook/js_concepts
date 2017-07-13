@@ -4,7 +4,7 @@ const Reader = require('../reader_monad')
 
 const id = a => a
 
-describe.only('Reader Monad', () => {
+describe('Reader Monad', () => {
   laws(Reader, r => r.runReader())
 
   it('should run the writer and return then env', () => (
