@@ -4,7 +4,7 @@ const laws = require('./monad_laws')
 
 const id = a => a
 
-describe.only('State Monad', () => {
+describe('State Monad', () => {
   laws(State, m => m.runState(5))
 
   it('should run and return the result of the state function', () => (
@@ -67,36 +67,4 @@ describe.only('State Monad', () => {
       [1, 4]
     )
   ))
-
-  it('should abide by applicative id law', () => (
-    assert.deepEqual(
-      State.of(id).ap(State(s => [s, s])).runState(4),
-      [4, 4]
-    )
-  ))
-
-  it('should abide by applicative homomorphism law', () => {
-    const double = a => a * 2
-    assert.deepEqual(
-      State.of(double)
-        .ap(State.of(5))
-        .runState(3),
-      State.of(double(5))
-        .runState(3)
-    )
-  })
-
-  it('should abide by applicative composition law', () => {
-    const double = a => a * 2
-    const add2 = a => a + 2
-    assert.deepEqual(
-      State.of(a => b => x => a(b(x)))
-        .ap(State.of(double))
-        .ap(State.of(add2))
-        .ap(State.of(5))
-        .runState(0),
-      State.of(double(add2(5)))
-        .runState(0)
-    )
-  })
 })

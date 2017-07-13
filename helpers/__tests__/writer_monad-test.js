@@ -2,7 +2,9 @@ const assert = require('assert')
 const Writer = require('../writer_monad')
 const laws = require('./monad_laws')
 
-describe.only('WriterMonad', () => {
+describe('WriterMonad', () => {
+  laws(Writer, m => m.runWriter())
+
   it('should return the state when run', () => (
     assert.deepEqual(
       Writer(['left', 'log']).runWriter(),
@@ -37,6 +39,4 @@ describe.only('WriterMonad', () => {
       ['abcdef', 'Data']
     )
   ))
-
-  laws(Writer, m => m.runWriter())
 })

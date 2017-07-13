@@ -39,5 +39,33 @@ module.exports = (M, run = id) => {
       run(M.of(5 * 4))
     )
   ))
+
+  it('should abide by applicative id law', () => (
+    assert.deepEqual(
+      run(M.of(id).ap(M.of(4))),
+      run(M.of(4))
+    )
+  ))
+
+  it('should abide by applicative homomorphism law', () => {
+    const double = a => a * 2
+    assert.deepEqual(
+      run(M.of(double)
+        .ap(M.of(5))),
+      run(M.of(double(5)))
+    )
+  })
+
+  it('should abide by applicative composition law', () => {
+    const double = a => a * 2
+    const add2 = a => a + 2
+    assert.deepEqual(
+      run(M.of(a => b => x => a(b(x)))
+        .ap(M.of(double))
+        .ap(M.of(add2))
+        .ap(M.of(5))),
+      run(M.of(double(add2(5))))
+    )
+  })
 }
 

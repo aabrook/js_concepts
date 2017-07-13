@@ -5,6 +5,10 @@ const Writer = ([a, s]) => ({
     const [l, ss] = f(a).runWriter()
     return Writer([l, s.concat(ss)])
   },
+  ap: (v) => {
+    const [l, r] = v.runWriter()
+    return Writer([a(l), r.concat(s)])
+  },
   extract: () => ([a, s]),
   inspect: () => `Writer(${[a, s]})`
 })
