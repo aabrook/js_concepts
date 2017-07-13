@@ -1,9 +1,12 @@
 const assert = require('assert')
 const State = require('../state_monad')
+const laws = require('./monad_laws')
 
 const id = a => a
 
-describe('State Monad', () => {
+describe.only('State Monad', () => {
+  laws(State, m => m.runState(5))
+
   it('should run and return the result of the state function', () => (
     assert.deepEqual(
       State(s => [s, s * 2]).runState(5),
@@ -49,61 +52,12 @@ describe('State Monad', () => {
       [6, 5])
   ))
 
-  it('should abide by id law', () => (
-    assert.deepEqual(
-      State(s => [s, s])
-        .map(id)
-        .runState(5),
-      [5, 5]
-    )
-  ))
-
-  it('should abide by composition law', () => {
-    const double = a => a * 2
-    const add2 = a => a + 2
-
-    assert.deepEqual(
-      State(s => [s, s])
-        .map(double)
-        .map(add2)
-        .runState(5),
-      State(s => [s, s])
-        .map(x => add2(double(x)))
-        .runState(5)
-    )
-  })
-
   it('should chain states together', () => (
     assert.deepEqual(
       State.of(0)
         .chain(l => State(r => [r * 2, l]))
         .runState(5),
       [10, 0]
-    )
-  ))
-
-  it('should work with monad id', () => (
-    assert.deepEqual(
-      State.of(5)
-        .chain(a => State.of(a))
-        .runState(0),
-      State.of(5).runState(0)
-    )
-  ))
-
-  it('should return a >>= k  =  k a', () => (
-    assert.deepEqual(
-      State.of(5)
-        .chain(s => State(ss => [s, ss]))
-        .runState(6),
-      (s => ss => [s, ss])(5)(6)
-    )
-  ))
-
-  it('should extract the state function', () => (
-    assert.equal(
-      State(id).extract(),
-      id
     )
   ))
 
