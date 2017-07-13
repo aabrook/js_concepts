@@ -18,6 +18,29 @@ describe('State Monad', () => {
     )
   ))
 
+  it('should put the state in the right side of the tuple', () => (
+    assert.deepEqual(
+      State.of(5)
+        .put(10)
+        .map(s => {
+          assert.equal(s, 5)
+          return s
+        })
+        .runState(5),
+      [5, 10]
+    )
+  ))
+
+  it('should return the right side of the tuple', () => (
+    assert.deepEqual(
+      State.of(5).get().map(s => {
+        assert.equal(s, 10)
+        return s
+      }).runState(10),
+      [10, 10]
+    )
+  ))
+
   it('should use map on the first tuple pair', () => (
     assert.deepEqual(
       State.of(2)

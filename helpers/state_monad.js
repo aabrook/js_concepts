@@ -1,6 +1,6 @@
+// s -> (a, s)
 const State = (st) => ({
-  // s -> (a, s)
-  runState: x => st(x),
+  runState: (x) => st(x),
   map: (f) => State(x => {
     [a, ss] = State(st).runState(x)
     return [f(a), ss]
@@ -14,8 +14,16 @@ const State = (st) => ({
     const [a, u] = state.runState(r)
     return [f(a), u]
   }),
+  get: () => State(s => {
+    const [_, r] = State(st).runState(s)
+    return [r, r]
+  }),
+  put: (s) => State(ss => {
+    const [l , _] = State(st).runState(ss)
+    return [l, s]
+  }),
   extract: () => (st),
-  inspect: () => (st)
+  inspect: () => `State(${st})`
 })
 
 State.of = (x) => State((s) => [x, s])
