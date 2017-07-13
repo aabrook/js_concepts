@@ -4,15 +4,14 @@ const error = () => {
 
 const Reader = (func) => ({
   runReader: (env) => func(env),
-  map: (f) => Reader(env => {
-    return f(func(env))
-  }),
-  chain: (f) => Reader(env => {
-    return f(func(env)).runReader(env)
-  }),
-  ask: () => Reader(env => env),
+  map: (f) => Reader(env =>
+    f(func(env))
+  ),
+  chain: (f) => Reader(env =>
+    f(func(env)).runReader(env)
+  ),
   ap: (v) => error(),
-  extract: error,
+  extract: () => func,
   inspect: () => `Reader(${func})`
 })
 

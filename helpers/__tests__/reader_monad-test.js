@@ -23,4 +23,8 @@ describe('Reader Monad', () => {
       'jo'
     )
   ))
+
+  it('should extract the function', () => (
+    assert.equal(Reader.of('Jo').extract()(), 'Jo')
+  ))
 })
