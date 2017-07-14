@@ -10,7 +10,11 @@ const Reader = (func) => ({
   chain: (f) => Reader(env =>
     f(func(env)).runReader(env)
   ),
-  ap: (v) => error(),
+  ap: (v) => Reader(env => {
+    const f = func(env)
+    const r = v.runReader(env)
+    return f(r)
+  }),
   extract: () => func,
   inspect: () => `Reader(${func})`
 })
