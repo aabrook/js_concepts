@@ -2,8 +2,6 @@ const assert = require('assert')
 const State = require('../state_monad')
 const laws = require('./monad_laws')
 
-const id = a => a
-
 describe('State Monad', () => {
   laws(State, m => m.runState(5))
 
@@ -44,10 +42,12 @@ describe('State Monad', () => {
   ))
 
   it('should return the final result of the functions', () => (
+    assert.equal(
       State.of('hello')
       .chain(s => State(state => [s.toUpperCase(), s.concat(', ').concat(state)]))
       .eval('Jo'),
       'HELLO'
+    )
   ))
 
   it('should return the right side of the tuple', () => (

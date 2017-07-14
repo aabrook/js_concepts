@@ -2,7 +2,7 @@
 const State = (st) => ({
   runState: (x) => st(x),
   map: (f) => State(x => {
-    [a, ss] = State(st).runState(x)
+    const [a, ss] = State(st).runState(x)
     return [f(a), ss]
   }),
   chain: (f) => State(s => {
@@ -15,11 +15,11 @@ const State = (st) => ({
     return [f(a), u]
   }),
   get: () => State(s => {
-    const [_, r] = State(st).runState(s)
+    const [, r] = State(st).runState(s)
     return [r, r]
   }),
   put: (s) => State(ss => {
-    const [l , _] = State(st).runState(ss)
+    const [l] = State(st).runState(ss)
     return [l, s]
   }),
   exec: (x) => st(x)[1],

@@ -2,8 +2,6 @@ const assert = require('assert')
 const laws = require('./monad_laws')
 const Reader = require('../reader_monad')
 
-const id = a => a
-
 describe('Reader Monad', () => {
   laws(Reader, r => r.runReader())
 

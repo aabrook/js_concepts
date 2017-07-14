@@ -1,7 +1,3 @@
-const error = () => {
-  throw new Error('not implemented')
-}
-
 const Reader = (func) => ({
   runReader: (env) => func(env),
   map: (f) => Reader(env =>
