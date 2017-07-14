@@ -27,6 +27,7 @@
     "express": "^4.15.3",
     "mocha": "^3.4.1",
     "nodemon": "^1.11.0",
+    "readline-sync": "^1.4.7",
     "sequelize": "^3.30.4",
     "sequelize-cli": "^2.7.0",
     "sinon": "^2.3.1",

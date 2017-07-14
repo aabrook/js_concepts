@@ -3,7 +3,7 @@ const { assign } = Object
 const dropItem = (a, i) => a.filter(fn => fn !== i)
 
 module.exports = {
-  emit: (a, s) => console.log(s) || s.map(([v, st]) => {
+  emit: (a, s) => s.map(([v, st]) => {
     (st.listeners[a] || []).concat(st.anyListeners || []).map(f => f([v, st]))
     return [v, st]
   }),

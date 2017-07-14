@@ -1,22 +1,27 @@
 const readline = require('readline-sync')
-const State = require('../helpers/state_monad')
 const { on, onAny, emit } = require('../functional_events')
 const { assign } = Object
+
+const AlmostState = ([l, r]) => ({
+  chain: (f) => f([l, r]),
+  map: (f) => AlmostState(f([l, r]))
+})
+AlmostState.of = (init) => AlmostState([init, init])
 
 let eventStore = []
 const print = ([message, state]) => ([console.log(message), state])
 
-const printTasks = ([v, s]) => State(print([s.tasks.join('\n'), s]))
+const printTasks = ([v, s]) => AlmostState(print([s.tasks.join('\n'), s]))
 const quit = () => process.exit(0)
 
 const addTask = ([task, state]) => [task, assign({}, state, { tasks: [...state.tasks, task] })]
 const promptAndAddTask = ([v, s]) => (
-  State(print(['Task:', s]))
-  .chain(([_v, s]) => State(addTask([readline.prompt(), s])))
-  .chain((s) => emit('addedTask', State(s)))
+  AlmostState(print(['Task:', s]))
+  .chain(([_v, s]) => AlmostState(addTask([readline.prompt(), s])))
+  .chain((s) => emit('addedTask', AlmostState(s)))
 )
 
-const viewEvents = ([v, s]) => State(print([eventStore, s]))
+const viewEvents = ([v, s]) => AlmostState(print([eventStore, s]))
 
 const promptResponses = ({
   'y': promptAndAddTask,
@@ -28,13 +33,13 @@ const promptResponses = ({
 const initialPrompt = (l) => (
   promptResponses[l]
   ? promptResponses[l]
-  : ([v, s]) => State(print([`Failed to find your selection ${v}`, s]))
+  : ([v, s]) => AlmostState(print([`Failed to find your selection ${v}`, s]))
 )
 
 const buildTaskList = (st) => (
-  st.chain(([_v, s]) => State(print(['Add task? y/n/v/q', s])))
-  .chain(([v, s]) => State([readline.prompt(), s]))
-  .chain(([v, s]) => emit(`selected${v.toUpperCase()}`, State([v, s])))
+  st.chain(([_v, s]) => AlmostState(print(['Add task? y/n/v/q', s])))
+  .chain(([v, s]) => AlmostState([readline.prompt(), s]))
+  .chain(([v, s]) => emit(`selected${v.toUpperCase()}`, AlmostState([v, s])))
   .chain(([v, s]) => initialPrompt(v)([v, s]))
 )
 
@@ -43,9 +48,9 @@ const main = (st) => (
 )
 
 main(
-  State.of({ tasks: [], anyListeners: [], listeners: {} })
-  .chain((s) => on('addedTask', ([v, s]) => console.log(`Added --- ${v} ---`), State(s)))
-  .chain((s) => on('selectedQ', ([v, s]) => console.log('Bye bye'), State(s)))
-  .chain((s) => on('selectedY', ([v, s]) => console.log('Tasks so far', s.tasks), State(s)))
-  .chain((s) => onAny(([v, s]) => (eventStore = [...eventStore, v]), State(s)))
+  AlmostState.of({ tasks: [], anyListeners: [], listeners: {} })
+  .chain((s) => on('addedTask', ([v, s]) => console.log(`Added --- ${v} ---`), AlmostState(s)))
+  .chain((s) => on('selectedQ', ([v, s]) => console.log('Bye bye'), AlmostState(s)))
+  .chain((s) => on('selectedY', ([v, s]) => console.log('Tasks so far', s.tasks), AlmostState(s)))
+  .chain((s) => onAny(([v, s]) => (eventStore = [...eventStore, v]), AlmostState(s)))
 )
