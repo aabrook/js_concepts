@@ -1,7 +1,6 @@
 const assert = require('assert')
 const sinon = require('sinon')
 const events = require('../')
-const State = require('../../helpers/state_monad')
 
 const id = a => a
 
@@ -9,7 +8,7 @@ describe('functional events', () => {
   it('should add listeners with on', () => {
     const t = sinon.spy()
     const t2 = sinon.spy()
-    const setup = events.on('test-state', t, State.of({ listeners: {} }))
+    const setup = events.on('test-state', t, [['', ({ listeners: {} })]])
     const subject = events.on('second-state', t2, setup)
     subject.map(([a, st]) => {
       assert.deepEqual([a, st], [
@@ -25,7 +24,7 @@ describe('functional events', () => {
   it('should add listeners on any event using \'onAny\'', () => {
     const t = sinon.spy()
     const t2 = sinon.spy()
-    const setup = events.onAny(t, State.of({ anyListeners: [] }))
+    const setup = events.onAny(t, [['', ({ anyListeners: [] })]])
     const subject = events.onAny(t2, setup)
     subject.map(([a, st]) => {
       assert.deepEqual([a, st], [
@@ -42,7 +41,7 @@ describe('functional events', () => {
     const t = sinon.spy()
     const t2 = sinon.spy()
     const t3 = sinon.spy()
-    const setup = events.onAny(t, State.of({ listeners: {}, anyListeners: [] }))
+    const setup = events.onAny(t, [['', { listeners: {}, anyListeners: [] }]])
     const withOn = events.on('not-to-run', t3, setup)
     const subject = events.onAny(t2, withOn)
 
@@ -61,11 +60,11 @@ describe('functional events', () => {
   it('should remove listeners', () => {
     const t = sinon.spy(id)
     const f = sinon.spy(id)
-    const subject = State.of({
+    const subject = [['', ({
       listeners: {
         'run-me': [t, f]
       }
-    })
+    })]]
 
     const test = events.remove('run-me', t, subject)
     test.map(([v, st]) => {
@@ -81,12 +80,12 @@ describe('functional events', () => {
   it('should emit events to registered listeners', () => {
     const t = sinon.spy(id)
     const f = sinon.spy(id)
-    const subject = State.of({
+    const subject = [['', ({
       listeners: {
         'run-me': [t],
         'not-me': [f]
       }
-    })
+    })]]
 
     const state = events.emit('run-me', subject.map(([_, st]) => ['test-action', st]))
     assert(t.called)
