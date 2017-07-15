@@ -12,6 +12,20 @@ describe('State Monad', () => {
     )
   ))
 
+  it('should provide both current result and state to the function', () => (
+    assert.deepEqual(
+      State.of('abc').withState((v, e) => v.concat(e)).runState('def'),
+      ['abcdef', 'def']
+    )
+  ))
+
+  it('should update the state with the left value', () => (
+    assert.deepEqual(
+      State.of('abc').withState((v, e) => v.concat(e)).push().runState('def'),
+      ['abcdef', 'abcdef']
+    )
+  ))
+
   it('should create a default state with the value in the left', () => (
     assert.deepEqual(
       State.of(5).runState(8),
