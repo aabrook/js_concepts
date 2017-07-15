@@ -39,4 +39,14 @@ describe('WriterMonad', () => {
       ['abcdef', 'Data']
     )
   ))
+
+  it('should add the result to the writer', () => (
+    assert.deepEqual(
+      Writer.of('abc')
+      .map(v => v.toUpperCase())
+      .listen(v => v.split('').join('-'))
+      .runWriter(),
+      ['A-B-C', 'A-B-C']
+    )
+  ))
 })

@@ -9,10 +9,18 @@ const Writer = ([a, s]) => ({
     const [l, r] = v.runWriter()
     return Writer([a(l), r.concat(s)])
   },
+  listen: (f) => {
+    const r = f(a)
+    return Writer([r, s.concat(r)])
+  },
   extract: () => ([a, s]),
   inspect: () => `Writer(${[a, s]})`
 })
 
 Writer.of = a => Writer([a, ''])
+Writer.listen = m => run => {
+  const r = run(m)
+  return Writer([r, r])
+}
 
 module.exports = Writer
