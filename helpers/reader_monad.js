@@ -11,6 +11,9 @@ const Reader = (func) => ({
     const r = v.runReader(env)
     return f(r)
   }),
+  withEnv: (f) => Reader(env =>
+    f(func(env), env)
+  ),
   extract: () => func,
   inspect: () => `Reader(${func})`
 })

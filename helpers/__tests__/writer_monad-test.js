@@ -5,7 +5,7 @@ const laws = require('./monad_laws')
 describe('WriterMonad', () => {
   laws(Writer, m => m.runWriter())
 
-  it('should return the state when run', () => (
+  it('should return the function result and log when run', () => (
     assert.deepEqual(
       Writer(['left', 'log']).runWriter(),
       ['left', 'log']
