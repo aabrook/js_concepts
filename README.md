@@ -7,6 +7,10 @@ The primary goal is to follow a more functional approach to where appropriate.
 
 Tests will live under __tests__ in the related directory
 
+# Monads (/monads)
+
+A pass at understanding and implementing something with monads.
+
 # Store (/store)
 
 The first is my pass at a redux style store. It initially started as a functional observer
