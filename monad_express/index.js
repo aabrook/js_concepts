@@ -1,27 +1,15 @@
 const express = require('express')
 const parser = require('body-parser')
-const uuid = require('uuid/v4')
 const { compose } = require('../helpers')
 const { assign } = Object
 const routes = require('./routes')
+const db = require('./data')
 
 const { Reader, Maybe } = require('../monads')
-const { Just, Nothing } = Maybe
-
-let data = {
-  [uuid()]: { name: 'jo', job: 'plumber' },
-  [uuid()]: { name: 'bob', job: 'builder' }
-}
-const byId = (id) => Just(data[id]).chain(d => d ? Just(d) : Nothing())
-const insert = (payload) => assign(data, { [uuid()]: payload })
 
 const env = {
   port: 3000,
-  db: {
-    byId,
-    all: data,
-    insert
-  }
+  db
 }
 
 const run = () => (
