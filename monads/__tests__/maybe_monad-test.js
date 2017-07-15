@@ -9,6 +9,14 @@ describe('Maybe', () => {
     Maybe.of(5).fork((v) => assert.equal(v, 5), () => assert.fail(new Error('Not a Just')))
   ))
 
+  it('should default to nothing if undefined is provided', () => (
+    Maybe.of(undefined).fork((v) => assert.fail('Should be nothing'), () => {})
+  ))
+
+  it('should default to nothing if null is provided', () => (
+    Maybe.of(null).fork((v) => assert.fail('Should be nothing'), () => {})
+  ))
+
   it('should not map over Nothing after chaining Just', () => (
     Maybe.of(5).chain(a => Nothing()).map(a => assert.fail(new Error('should not map')))
     .fork(() => assert.fail('Should not be Just'), () => {})

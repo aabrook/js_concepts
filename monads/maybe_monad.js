@@ -17,6 +17,6 @@ const Just = (v) => ({
 })
 
 const Maybe = () => {}
-Maybe.of = (v) => Just(v)
+Maybe.of = (v) => v === null || v === undefined ? Nothing() : Just(v)
 
 module.exports = { Maybe, Just, Nothing }
