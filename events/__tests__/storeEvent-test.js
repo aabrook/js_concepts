@@ -96,7 +96,6 @@ describe('event store', () => {
       on('test_event', projection)
       onAny(secondProjection)
 
-      console.log(emit('test_event', 'we_in_there'))
       assert.deepEqual(emit('test_event', 'we_in_there'), ['we_in_thereproj', 'test_eventwe_in_theresecond'])
       assert(projection.called)
       assert(secondProjection.called)
