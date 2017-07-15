@@ -1,7 +1,7 @@
 const express = require('express')
 const parser = require('body-parser')
 const uuid = require('uuid/v4')
-const { bool, compose } = require('../helpers')
+const { compose } = require('../helpers')
 const { assign } = Object
 const routes = require('./routes')
 
@@ -23,13 +23,6 @@ const env = {
     insert
   }
 }
-const runReader = (env) => (
-  bool(
-    a => a,
-    r => r.runReader(env),
-    r => r.hasOwnProperty('runReader')
-  )
-)
 
 const run = () => (
   Reader.ask()
@@ -37,7 +30,7 @@ const run = () => (
       const { app, port } = env
       app.use(parser.json())
 
-      runReader(env)(routes())
+      Reader.run(routes(), env)
 
       const started = compose(
         console.log,
