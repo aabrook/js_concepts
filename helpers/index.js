@@ -16,6 +16,7 @@ const Try = (fn, success, error = id) => (...args) => {
   }
 }
 
+const bool = (f, t, c) => (...args) => c(...args) ? t(...args) : f(...args)
 const compose = (...funcs) => funcs.reduce((acc, fn) => (...args) => acc(fn(...args)))
 
 const $ = (f, a) => f(a)
@@ -35,6 +36,7 @@ const curry = (f) => {
 const map = (f, a) => a.length ? [f(a[0]), ...map(f, a.slice(1))] : []
 
 module.exports = {
+  bool: curry(bool),
   $: curry($),
   compose,
   curry,
