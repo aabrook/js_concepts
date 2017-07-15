@@ -12,6 +12,17 @@ describe('Reader Monad', () => {
     )
   ))
 
+  it('should run the monad if it is a reader', () => (
+    Reader.run(Reader.of('abc').withEnv((a, env) => assert.equal(env, 'def') || a), 'def')
+  ))
+
+  it('should not error if it is not a reader', () => (
+    assert.equal(
+      Reader.run('def', 'ghi'),
+      'def'
+    )
+  ))
+
   it('should not change the environment', () => (
     assert.equal(
       Reader.of('abc').withEnv((v, e) => e.concat(v)).chain(v =>

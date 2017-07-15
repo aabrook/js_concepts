@@ -20,5 +20,6 @@ const Reader = (func) => ({
 
 Reader.of = a => Reader(_ => a)
 Reader.ask = () => Reader(env => env)
+Reader.run = (r, env) => r.hasOwnProperty('runReader') ? r.runReader(env) : r
 
 module.exports = Reader
