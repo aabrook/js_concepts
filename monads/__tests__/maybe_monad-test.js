@@ -1,6 +1,6 @@
 const assert = require('assert')
 const laws = require('./monad_laws')
-const { Maybe, Nothing } = require('../maybe_monad')
+const { maybe, Just, Maybe, Nothing } = require('../maybe_monad')
 
 describe('Maybe', () => {
   laws(Maybe, a => a.fork(b => b, c => c))
@@ -35,4 +35,20 @@ describe('Maybe', () => {
     Nothing().chain(() => assert.fail(new Error('should not chain')))
     .fork(() => assert.fail('Should not be a Just'), () => {})
   ))
+
+  describe('maybe', () => {
+    it('should fallback to default with nothing', () => (
+      assert.equal(
+        maybe(5)(a => a + 2)(Nothing()),
+        5
+      )
+    ))
+
+    it('should apply the function to the value and return it', () => (
+      assert.equal(
+        maybe(5)(a => a + 2)(Just(10)),
+        12
+      )
+    ))
+  })
 })

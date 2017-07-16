@@ -19,4 +19,6 @@ const Just = (v) => ({
 const Maybe = () => {}
 Maybe.of = (v) => v === null || v === undefined ? Nothing() : Just(v)
 
-module.exports = { Maybe, Just, Nothing }
+const maybe = def => f => m => m.map(f).fork(a => a, _ => def)
+
+module.exports = { Maybe, maybe, Just, Nothing }
