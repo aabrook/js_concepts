@@ -12,6 +12,12 @@ const env = {
   db
 }
 
+const started = (port) => compose(
+  console.log,
+  res => res.fork(err => `Failed to start ${err}`, () => `Listening on ${port}`),
+  Maybe.Maybe.of
+)
+
 const run = () => (
   Reader.ask()
     .map(env => {
@@ -20,12 +26,7 @@ const run = () => (
 
       Reader.run(routes(), env)
 
-      const started = compose(
-        console.log,
-        res => res.fork(err => `Failed to start ${err}`, () => `Listening on ${port}`),
-        Maybe.Maybe.of)
-
-      return app.listen(port, started)
+      return app.listen(port, started(port))
     })
 )
 
