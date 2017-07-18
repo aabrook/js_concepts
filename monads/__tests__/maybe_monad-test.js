@@ -8,7 +8,9 @@ describe('Maybe', () => {
   it('will do fizz buzz with concat!', () => {
     const fizz = n => n % 3 === 0 ? Just('Fizz') : Nothing()
     const buzz = n => n % 5 === 0 ? Just('Buzz') : Nothing()
-    const fizzBuzz = Just(a => b => c => a(c).concat(b(c)).fork(a => a, _ => c))
+    const fizzBuzz = Just(a => b => c =>
+      a(c).concat(b(c)).fork(a => a, _ => c)
+    )
     const prep = fizzBuzz.ap(Just(fizz)).ap(Just(buzz))
 
     assert.equal(prep.ap(Just(3)).extract(), 'Fizz')
