@@ -1,4 +1,5 @@
 const Nothing = () => ({
+  concat: (f) => f,
   map: (f) => Nothing(),
   chain: (f) => Nothing(),
   ap: (f) => Nothing(),
@@ -8,6 +9,7 @@ const Nothing = () => ({
 })
 
 const Just = (v) => ({
+  concat: (f) => f.fork(fv => Just(v.concat(fv)), _ => Just(v)),
   map: (f) => Just(f(v)),
   chain: (f) => f(v),
   ap: (f) => Just(v(f.extract())),

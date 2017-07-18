@@ -5,6 +5,18 @@ const { maybe, Just, Maybe, Nothing } = require('../maybe_monad')
 describe('Maybe', () => {
   laws(Maybe, a => a.fork(b => b, c => c))
 
+  it('will do fizz buzz with concat!', () => {
+    const fizz = n => n % 3 === 0 ? Just('Fizz') : Nothing()
+    const buzz = n => n % 5 === 0 ? Just('Buzz') : Nothing()
+    const fizzBuzz = Just(a => b => c => a(c).concat(b(c)).fork(a => a, _ => c))
+    const prep = fizzBuzz.ap(Just(fizz)).ap(Just(buzz))
+
+    assert.equal(prep.ap(Just(3)).extract(), 'Fizz')
+    assert.equal(prep.ap(Just(5)).extract(), 'Buzz')
+    assert.equal(prep.ap(Just(13)).extract(), 13)
+    assert.equal(prep.ap(Just(15)).extract(), 'FizzBuzz')
+  })
+
   it('should default to a Just monad', () => (
     Maybe.of(5).fork((v) => assert.equal(v, 5), () => assert.fail(new Error('Not a Just')))
   ))
