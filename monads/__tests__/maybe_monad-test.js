@@ -8,15 +8,12 @@ describe('Maybe', () => {
   it('will do fizz buzz with concat!', () => {
     const fizz = n => n % 3 === 0 ? Just('Fizz') : Nothing()
     const buzz = n => n % 5 === 0 ? Just('Buzz') : Nothing()
-    const fizzBuzz = Just(a => b => c =>
-      a(c).concat(b(c)).fork(a => a, _ => c)
-    )
-    const prep = fizzBuzz.ap(Just(fizz)).ap(Just(buzz))
+    const run = n => fizz(n).concat(buzz(n)).fork(a => a, _ => n)
 
-    assert.equal(prep.ap(Just(3)).extract(), 'Fizz')
-    assert.equal(prep.ap(Just(5)).extract(), 'Buzz')
-    assert.equal(prep.ap(Just(13)).extract(), 13)
-    assert.equal(prep.ap(Just(15)).extract(), 'FizzBuzz')
+    assert.equal(run(3), 'Fizz')
+    assert.equal(run(5), 'Buzz')
+    assert.equal(run(13), 13)
+    assert.equal(run(15), 'FizzBuzz')
   })
 
   it('should default to a Just monad', () => (
