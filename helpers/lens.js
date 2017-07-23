@@ -17,8 +17,8 @@ const Lens = (l, r) => ({
   set: (v, obj) => r(v, obj),
   over: (f, s) => r(f(l(s), s), s),
 
-  map: (f) => Lens(l, v => r(f(v))),
-  contramap: (f) => Lens(v => l(f(v)), r),
+  map: (f) => Lens(l, (v, obj) => r(f(v), obj)),
+  contramap: (f) => Lens(v => f(l(v)), r),
 
   extract: () => [l, r],
   inspect: () => `Lens(${l}, ${r})`

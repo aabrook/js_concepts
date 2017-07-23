@@ -26,13 +26,13 @@ describe('Lens', () => {
 
   it('should contramap', () => {
     const a = { firstName: 'Bob', surname: 'The', age: 30, job: 'builder', status: 'active' }
-    const justNameAgeJob = ({ name, age, job }) => ({ name, age, job })
     const joinName = (obj) => assign({}, obj, { name: `${obj.firstName} ${obj.surname}` })
+    const justNameAgeJob = ({ name, age, job }) => ({ name, age, job })
 
     assert.deepEqual(
       Lens.of(id, id)
-      .contramap(justNameAgeJob)
       .contramap(joinName)
+      .contramap(justNameAgeJob)
       .view(a),
       { name: 'Bob The', age: 30, job: 'builder' }
     )
