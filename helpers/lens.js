@@ -1,24 +1,27 @@
+const { id } = require('./')
+const { assign } = Object
+
 const Lens = (l, r) => ({
-  concat: (lens) => Lens(lens.contramap(l), lens.map(r)),
-  contramap: (f) => Lens((v => f(l(v))), r),
-  map: (f) => Lens(l, (v => f(r(v)))),
-  view: (v) => r(v),
-  over: (v) => r(l(v)),
+  concat: (lens) => (
+    Lens(
+      v => lens.extract()[0](l(v)),
+      (v, obj) => r(lens.extract()[1](v, obj), obj)
+    )
+  ),
+  view: (v) => l(v),
+  set: (v, obj) => r(v, obj),
+  over: (f, s) => r(f(l(s), s), s),
+
+  map: (f) => Lens(l, v => r(f(v))),
+  contramap: (f) => Lens(v => l(f(v)), r),
+
+  extract: () => [l, r],
   inspect: () => `Lens(${l}, ${r})`
 })
 
 Lens.of = (a, b) => Lens(a, b)
-
-const a = { name: 'Jo', age: 35, city: 'Townsville' }
-l = Lens.of(a => a, b => b)
-const b = l.contramap(({ name, age }) => ({ name, age })
-  ).contramap(({ name, age }) => ({ name, age: age * 2})
-  ).map(({ name, age }) => (`${name} is ${age}`)
-  ).over(a)
-
-const name = Lens.of(({ name }) => name, a => a)
-
-console.log(l)
-console.log(b)
+Lens.empty = Lens(id, id)
+Lens.withProp = (k) => Lens(v => v[k], (v, obj) => assign({}, obj, { [k]: v }))
+Lens.withIndex = (k) => Lens(v => v[k], (v, ary) => ary.map((val, i) => i === k ? v : val))
 
 module.exports = Lens
