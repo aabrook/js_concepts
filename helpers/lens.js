@@ -4,10 +4,15 @@ const { assign } = Object
 const Lens = (l, r) => ({
   concat: (lens) => (
     Lens(
-      v => lens.extract()[0](l(v)),
-      (v, obj) => r(lens.extract()[1](v, obj), obj)
+      v => lens.view(l(v)),
+      (v, obj) => {
+        const inner = lens.set(v, l(obj))
+
+        return r(inner, obj)
+      }
     )
   ),
+
   view: (v) => l(v),
   set: (v, obj) => r(v, obj),
   over: (f, s) => r(f(l(s), s), s),
