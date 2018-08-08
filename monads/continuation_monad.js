@@ -24,6 +24,6 @@ delay(1000, 'yay')(s => delay(1000, s + '!!!')(console.log))
 
 Continuation(done => setTimeout(() => done('yay'), 1000))
   .chain(s => Continuation(
-    next => setTimeout(() => next(s + '!!!'), 1000)
+    next => setTimeout(() => next(s + '!'), 1000)
   ))
   .run(console.log)
