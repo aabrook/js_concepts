@@ -13,7 +13,7 @@ const Just = (v) => ({
     f.fork(fv => Just(concat(v, fv)), _ => Just(v)),
   map: (f) => Just(f(v)),
   chain: (f) => f(v),
-  ap: (f) => Just(v(f.extract())),
+  ap: (f) => f.chain(v).fork(Just, () => Nothing()),
   extract: () => v,
   fork: (s, _f) => s(v),
   inspect: () => `Just(${v})`
